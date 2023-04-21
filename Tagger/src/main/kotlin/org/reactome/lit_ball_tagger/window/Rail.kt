@@ -24,19 +24,19 @@ fun Rail(
         )
         NavigationRailItem(
             onClick = onRailItemClicked[1],
-            icon = { Icon(Icons.Filled.Add, null) },
-            label = { Text("New") },
+            icon = { Icon(Icons.Filled.FileOpen, null) },
+            label = { Text("Open/New") },
             selected = selectedItem == 1
         )
         NavigationRailItem(
             onClick = onRailItemClicked[2],
-            icon = { Icon(Icons.Filled.Add, null) },
+            icon = { Icon(Icons.Filled.Download, null) },
             label = { Text("Import") },
             selected = selectedItem == 2
         )
         NavigationRailItem(
             onClick = onRailItemClicked[3],
-            icon = { Icon(Icons.Filled.Add, null) },
+            icon = { Icon(Icons.Filled.Publish, null) },
             label = { Text("Export") },
             selected = selectedItem == 3
         )
