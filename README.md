@@ -38,7 +38,7 @@ So the small option looks affordable.
 
 ### Setting up LLM training
 
-#### The Helper
+#### The Tagger
 This app will 
-- take files containing DOIs and create files with DOI/Title pairs in JSON format
-- let you eyeball and extract/move/remove entries from the pair files
+- import files containing DOIs and create files with DOI/Title pairs in JSON format
+- let you eyeball and extract/move/remove/export entries from the pair files
