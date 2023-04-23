@@ -12,6 +12,7 @@ fun Rail(
     onRailItemClicked: List<() -> Unit>,
 ) {
     val selectedItem by remember { mutableStateOf(0) }
+// TODO
 //    val items = listOf("Info", "Settings", "Exit")
 //    val icons = listOf(Icons.Filled.Settings, Icons.Filled.ExitToApp)
 //    val actions = listOf( {  } , { App.buttonSettings() }, { App.buttonExit() } )
@@ -42,15 +43,21 @@ fun Rail(
         )
         NavigationRailItem(
             onClick = onRailItemClicked[4],
-            icon = { Icon(Icons.Filled.Settings, null) },
-            label = { Text("Settings") },
+            icon = { Icon(Icons.Filled.Save, null) },
+            label = { Text("Save") },
             selected = selectedItem == 4
         )
         NavigationRailItem(
             onClick = onRailItemClicked[5],
+            icon = { Icon(Icons.Filled.Settings, null) },
+            label = { Text("Settings") },
+            selected = selectedItem == 5
+        )
+        NavigationRailItem(
+            onClick = onRailItemClicked[6],
             icon = { Icon(Icons.Filled.ExitToApp, null) },
             label = { Text("Exit") },
-            selected = selectedItem == 5
+            selected = selectedItem == 6
         )
     }
 }

@@ -11,7 +11,7 @@ import kotlin.io.path.*
 
 val module = SerializersModule {
     polymorphic(SerialDBClass::class) {
-        subclass(Title::class)
+        subclass(Settings::class)
     }
 }
 

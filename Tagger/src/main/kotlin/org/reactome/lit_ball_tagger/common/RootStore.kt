@@ -9,10 +9,6 @@ internal class RootStore {
         private set
 
     fun setFromDb(map: MutableMap<String,SerialDBClass>) {
-        val items = map["queries"]
-        if (items is TitleList) {
-            setState { copy(items = items) }
-        }
         val settings = map["settings"]
         if (settings is Settings) {
             setState { copy(settings = settings) }
@@ -21,17 +17,20 @@ internal class RootStore {
     }
 
     val onRailItemClicked: List<() -> Unit> = listOf(
-        ::buttonInfo, ::buttonNew, ::buttonImport, ::buttonExport, ::buttonSettings, ::buttonExit)
+        ::buttonInfo, ::buttonNew, ::buttonImport, ::buttonExport, ::buttonSave, ::buttonSettings, ::buttonExit)
     private fun buttonInfo() {
-        SerialDB.set("queries", state.items)
-        SerialDB.set("settings", state.settings)
-        SerialDB.commit()
     }
     private fun buttonNew() {
+        CurrentTitleList.new()
     }
     private fun buttonImport() {
+        CurrentTitleList.import()
     }
     private fun buttonExport() {
+        CurrentTitleList.export()
+    }
+    private fun buttonSave() {
+        CurrentTitleList.save()
     }
     private fun buttonSettings() {
     }
@@ -45,19 +44,6 @@ internal class RootStore {
         setState { copy(items = TitleList(items.list.filterNot { it.id == id }.toMutableList())) }
     }
 
-//    fun onNewItemClicked() {
-//        setState {
-//            val newItem =
-//                Query(
-//                    id = items.list.maxOfOrNull(Query::id)?.plus(1) ?: 1,
-//                    text = "New Query"
-//                )
-//
-//            copy(items = QueryList((items.list + newItem).toMutableList()))
-//        }
-//        SerialDB.commit()
-//    }
-
     fun onEditorCloseClicked() {
         setState { copy(editingItemId = null) }
     }
@@ -68,10 +54,12 @@ internal class RootStore {
         }
     }
 
-    fun onEditorDoneChanged(/* isDone: Boolean */) {
+    fun onEditorDoneChanged(/*isDone: Boolean*/) {
+        /*
         setState {
-            updateItem(id = requireNotNull(editingItemId)) { it.copy(/* isDone = isDone */) }
+            updateItem(id = requireNotNull(editingItemId)) { it.copy(isDone = isDone ) }
         }
+        */
     }
 
     private fun RootState.updateItem(id: Int, transformer: (Title) -> Title): RootState =
@@ -79,9 +67,9 @@ internal class RootStore {
 
     private fun initialState(): RootState =
         RootState(
-            items = TitleList(
-                (1..5).map { id ->
-                    Title(id = id, text = "Some text $id")
+            items = TitleList(list =
+                (1..55).map { id ->
+                    Title(id = id, text = "Some text $id", tag = Tag.Exp )
                 }.toMutableList(),
             )
         )

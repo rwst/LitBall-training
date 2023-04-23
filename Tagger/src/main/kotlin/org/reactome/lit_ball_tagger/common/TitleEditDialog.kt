@@ -13,4 +13,5 @@ fun TitleEditDialog(
     onTextChanged: KFunction1<String, Unit>,
     onDoneChanged: () -> Unit
 ) {
+    println(item)
 }
