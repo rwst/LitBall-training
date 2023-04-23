@@ -42,4 +42,11 @@ fun RootContent(modifier: Modifier = Modifier) {
             state.settings,
             onCloseClicked = {})
     }
+    if (state.newList) {
+        NewListDialog(
+            state.items,
+            onResult = model::onNewFileResult,
+            onDoneChanged = model::onNewFileDoneChanged,
+        )
+    }
 }

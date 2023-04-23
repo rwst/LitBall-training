@@ -1,16 +1,8 @@
 package org.reactome.lit_ball_tagger.common
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
-class TitleList(@Contextual val list: MutableList<Title> = mutableListOf()) {
-    fun updateItem(id: Int, transformer: (Title) -> Title) : TitleList {
-        list.replaceFirst (transformer) { it.id == id }
-        return this
-    }
-}
 enum class Tag {
     @SerialName("OTHER") Other,
     @SerialName("EXP") Exp,

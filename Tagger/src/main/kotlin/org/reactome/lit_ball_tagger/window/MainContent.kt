@@ -26,15 +26,15 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.reactome.lit_ball_tagger.common.CurrentTitleList
 import org.reactome.lit_ball_tagger.common.Title
-import org.reactome.lit_ball_tagger.common.TitleList
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
 @Suppress("FunctionName")
 @Composable
 internal fun MainContent(
     modifier: Modifier = Modifier,
-    items: TitleList,
+    items: CurrentTitleList,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
     onRailItemClicked: List<() -> Unit>,
@@ -56,7 +56,7 @@ internal fun MainContent(
 
 @Composable
 private fun ListContent(
-    items: TitleList,
+    items: CurrentTitleList,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
 ) {

@@ -3,6 +3,7 @@ package org.reactome.lit_ball_tagger.common
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import java.io.File
 
 internal class RootStore {
     var state: RootState by mutableStateOf(initialState())
@@ -21,7 +22,7 @@ internal class RootStore {
     private fun buttonInfo() {
     }
     private fun buttonNew() {
-        CurrentTitleList.new()
+        setState { copy(newList = true) }
     }
     private fun buttonImport() {
         CurrentTitleList.import()
@@ -41,7 +42,7 @@ internal class RootStore {
     }
 
     fun onItemDeleteClicked(id: Int) {
-        setState { copy(items = TitleList(items.list.filterNot { it.id == id }.toMutableList())) }
+//        setState { copy(items = TitleList(items.list.filterNot { it.id == id }.toMutableList())) }
     }
 
     fun onEditorCloseClicked() {
@@ -62,28 +63,28 @@ internal class RootStore {
         */
     }
 
+    fun onNewFileDoneChanged() {
+        setState { copy(newList = false) }
+    }
+    fun onNewFileResult(file: File) {
+        setState { copy(newList = false) }
+    }
     private fun RootState.updateItem(id: Int, transformer: (Title) -> Title): RootState =
         copy(items = items.updateItem(id = id, transformer = transformer))
 
-    private fun initialState(): RootState =
-        RootState(
-            items = TitleList(list =
-                (1..55).map { id ->
-                    Title(id = id, text = "Some text $id", tag = Tag.Exp )
-                }.toMutableList(),
-            )
-        )
+    private fun initialState(): RootState = RootState()
 
     private inline fun setState(update: RootState.() -> RootState) {
         state = state.update()
     }
 
     data class RootState(
-        val items: TitleList = TitleList(),
+        val items: CurrentTitleList = CurrentTitleList,
         val settings: Settings = Settings(),
         val activeRailItem: String = "",
         val editingItemId: Int? = null,
         val editingSettings: Boolean = false,
+        var newList: Boolean = false,
     )
 }
 
