@@ -13,8 +13,14 @@ object CurrentTitleList {
     }
 
     fun new(file: File): CurrentTitleList {
-        path = file.absolutePath
-        Settings.map["list-path"] = file.absolutePath
+        if (file.isDirectory) {
+            Settings.map["list-path"] = file.absolutePath
+            path = file.absolutePath + "/Untitled"
+        }
+        else {
+            Settings.map["list-path"] = file.absolutePath.substringBeforeLast('/')
+            path = file.absolutePath
+        }
         Settings.save()
         return this
     }
