@@ -9,13 +9,14 @@ import kotlin.reflect.KFunction1
 @Suppress("FunctionName")
 @Composable
 internal fun NewListDialog(
-    items: CurrentTitleList,
+    startPath: String?,
     onResult: KFunction1<File, Unit>,
     onDoneChanged: () -> Unit,
 )
 {
     FileChooserDialog(
         "Choose a file",
+        startPath,
         onResult,
         onDoneChanged,
         )
@@ -24,16 +25,16 @@ internal fun NewListDialog(
 @Composable
 fun FileChooserDialog(
     title: String,
+    path: String?,
     onResult: (File) -> Unit,
     onDoneChanged: () -> Unit,
 ) {
     val fileChooser = JFileChooser(FileSystemView.getFileSystemView())
-    fileChooser.currentDirectory = File(System.getProperty("user.dir"))
+    fileChooser.currentDirectory = File(path?:System.getProperty("user.dir"))
     fileChooser.dialogTitle = title
     fileChooser.fileSelectionMode = JFileChooser.FILES_AND_DIRECTORIES
     fileChooser.isAcceptAllFileFilterUsed = true
     fileChooser.selectedFile = null
-    fileChooser.currentDirectory = null
     if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
         val file = fileChooser.selectedFile
         onResult(file)

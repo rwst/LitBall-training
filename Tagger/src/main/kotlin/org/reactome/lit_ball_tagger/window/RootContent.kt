@@ -43,7 +43,7 @@ fun RootContent(modifier: Modifier = Modifier) {
     }
     if (state.newList) {
         NewListDialog(
-            state.items,
+            state.settings.map["list-path"],
             onResult = model::onNewFileResult,
             onDoneChanged = model::onNewFileDoneChanged,
         )
