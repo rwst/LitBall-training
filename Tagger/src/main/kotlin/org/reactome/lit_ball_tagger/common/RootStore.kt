@@ -67,7 +67,7 @@ internal class RootStore {
         setState { copy(newList = false) }
     }
     fun onNewFileResult(file: File) {
-        setState { copy(newList = false) }
+        setState { copy(items = items.new(file), newList = false) }
     }
     private fun RootState.updateItem(id: Int, transformer: (Title) -> Title): RootState =
         copy(items = items.updateItem(id = id, transformer = transformer))

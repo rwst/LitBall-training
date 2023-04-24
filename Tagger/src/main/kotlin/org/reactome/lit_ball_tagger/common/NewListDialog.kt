@@ -36,11 +36,9 @@ fun FileChooserDialog(
     fileChooser.currentDirectory = null
     if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
         val file = fileChooser.selectedFile
-        println("choose file or folder is: $file")
         onResult(file)
     } else {
         onDoneChanged()
-        println("No Selection ")
     }
 }
 //{
