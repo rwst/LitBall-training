@@ -24,8 +24,7 @@ fun RootContent(modifier: Modifier = Modifier) {
     )
 
     LaunchedEffect(Unit) {
-        SerialDB.open()
-        model.setFromDb(SerialDB.get())
+        Settings.load()
     }
 
     state.editingItemId?.also { item ->

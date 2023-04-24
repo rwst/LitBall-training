@@ -9,14 +9,6 @@ internal class RootStore {
     var state: RootState by mutableStateOf(initialState())
         private set
 
-    fun setFromDb(map: MutableMap<String,SerialDBClass>) {
-        val settings = map["settings"]
-        if (settings is Settings) {
-            setState { copy(settings = settings) }
-        }
-        SerialDB.commit()
-    }
-
     val onRailItemClicked: List<() -> Unit> = listOf(
         ::buttonInfo, ::buttonNew, ::buttonImport, ::buttonExport, ::buttonSave, ::buttonSettings, ::buttonExit)
     private fun buttonInfo() {
@@ -69,6 +61,9 @@ internal class RootStore {
     fun onNewFileResult(file: File) {
         setState { copy(items = items.new(file), newList = false) }
     }
+    fun onSettingsChanged(settings: Settings) {
+        setState { copy(settings = settings) }
+    }
     private fun RootState.updateItem(id: Int, transformer: (Title) -> Title): RootState =
         copy(items = items.updateItem(id = id, transformer = transformer))
 
@@ -80,7 +75,7 @@ internal class RootStore {
 
     data class RootState(
         val items: CurrentTitleList = CurrentTitleList,
-        val settings: Settings = Settings(),
+        val settings: Settings = Settings,
         val activeRailItem: String = "",
         val editingItemId: Int? = null,
         val editingSettings: Boolean = false,

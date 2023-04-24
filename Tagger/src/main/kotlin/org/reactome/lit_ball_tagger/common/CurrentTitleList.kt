@@ -14,6 +14,8 @@ object CurrentTitleList {
 
     fun new(file: File): CurrentTitleList {
         path = file.absolutePath
+        Settings.map["list-path"] = file.absolutePath
+        Settings.save()
         return this
     }
     fun save() {
