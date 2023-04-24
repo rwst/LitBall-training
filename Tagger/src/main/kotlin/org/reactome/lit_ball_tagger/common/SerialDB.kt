@@ -62,5 +62,4 @@ object SerialDB {
         }
         catch (e: IOException) { Logger.error(e) }
     }
-    fun close() {}
 }

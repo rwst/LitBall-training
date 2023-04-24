@@ -41,16 +41,3 @@ fun FileChooserDialog(
         onDoneChanged()
     }
 }
-//{
-//    Dialog(
-//        title = "Create New List",
-//        onCloseRequest = onCloseClicked,
-//    ) {
-//        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-//            TextField(
-//                value = "Path to database storage",
-//                onValueChange = {}
-//            )
-//        }
-//    }
-//}
