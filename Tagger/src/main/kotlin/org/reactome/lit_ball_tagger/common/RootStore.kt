@@ -3,6 +3,7 @@ package org.reactome.lit_ball_tagger.common
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.GlobalScope
 import java.io.File
 
 internal class RootStore {
@@ -17,7 +18,7 @@ internal class RootStore {
         setState { copy(newList = true) }
     }
     private fun buttonImport() {
-        CurrentTitleList.import()
+        setState { copy(doImport = true) }
     }
     private fun buttonExport() {
         CurrentTitleList.export()
@@ -61,6 +62,12 @@ internal class RootStore {
     fun onNewFileResult(file: File) {
         setState { copy(items = items.new(file), newList = false) }
     }
+    fun onImportDoneChanged() {
+        setState { copy(doImport = false) }
+    }
+    fun onImportResult(file: File) {
+        setState { copy(items = items.import(file), doImport = false) }
+    }
     fun onSettingsChanged(settings: Settings) {
         setState { copy(settings = settings) }
     }
@@ -79,7 +86,8 @@ internal class RootStore {
         val activeRailItem: String = "",
         val editingItemId: Int? = null,
         val editingSettings: Boolean = false,
-        var newList: Boolean = false,
+        val newList: Boolean = false,
+        val doImport: Boolean = false,
     )
 }
 

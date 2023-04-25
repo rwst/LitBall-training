@@ -31,5 +31,7 @@ object CurrentTitleList {
         File(pathStr).writeText(text)
     }
     fun export() {}
-    fun import() {}
+    fun import(file: File): CurrentTitleList {
+        return this
+    }
 }

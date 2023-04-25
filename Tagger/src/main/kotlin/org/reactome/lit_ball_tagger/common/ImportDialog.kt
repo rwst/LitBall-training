@@ -3,11 +3,10 @@ package org.reactome.lit_ball_tagger.common
 import androidx.compose.runtime.Composable
 import kotlinx.coroutines.Job
 import java.io.File
-import kotlin.reflect.KFunction1
 
 @Suppress("FunctionName")
 @Composable
-internal fun NewListDialog(
+internal fun ImportDialog(
     startPath: String?,
     onResult: (file: File) -> Job,
     onDoneChanged: () -> Unit,
@@ -18,5 +17,5 @@ internal fun NewListDialog(
         startPath,
         onResult,
         onDoneChanged,
-        )
+    )
 }
