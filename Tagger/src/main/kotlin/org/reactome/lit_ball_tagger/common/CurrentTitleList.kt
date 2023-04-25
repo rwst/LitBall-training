@@ -31,7 +31,18 @@ object CurrentTitleList {
         File(pathStr).writeText(text)
     }
     fun export() {}
-    fun import(file: File): CurrentTitleList {
+    suspend fun import(file: File): CurrentTitleList {
+        if (file.isDirectory) {
+            Settings.map["import-path"] = file.absolutePath
+            Settings.save()
+            return this
+        }
+        else {
+            Settings.map["import-path"] = file.absolutePath.substringBeforeLast('/')
+            Settings.save()
+        }
+        val lines = file.readLines()
+        println(S2client.getDataFor(lines[0]))
         return this
     }
 }

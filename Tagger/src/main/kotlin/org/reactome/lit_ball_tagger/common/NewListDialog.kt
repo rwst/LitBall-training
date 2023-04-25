@@ -3,7 +3,6 @@ package org.reactome.lit_ball_tagger.common
 import androidx.compose.runtime.Composable
 import kotlinx.coroutines.Job
 import java.io.File
-import kotlin.reflect.KFunction1
 
 @Suppress("FunctionName")
 @Composable

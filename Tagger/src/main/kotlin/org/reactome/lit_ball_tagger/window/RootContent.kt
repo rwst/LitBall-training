@@ -50,6 +50,7 @@ fun RootContent(modifier: Modifier = Modifier) {
             onResult = {
                 scope.launch (Dispatchers.IO) {
                     state.items.new(it)
+                    (model::onItemsChanged)()
                 } },
             onDoneChanged = model::onNewFileDoneChanged,
         )
@@ -60,6 +61,7 @@ fun RootContent(modifier: Modifier = Modifier) {
             onResult = {
                 scope.launch (Dispatchers.IO) {
                     state.items.import(it)
+                    (model::onItemsChanged)()
                 } },
             onDoneChanged = model::onImportDoneChanged,
         )
