@@ -1,5 +1,6 @@
 package org.reactome.lit_ball_tagger.common
 
+import kotlinx.serialization.Serializable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
@@ -30,8 +31,8 @@ object S2Service {
         }
     }
 
-    // Max supported fields: "paperId, title, abstract, publicationTypes, tldr"
-
+    // Max supported fields: "paperId, externalIds, title, abstract, publicationTypes, tldr"
+    @Serializable
     data class PaperDetails (
         val paperId: String = "",
         val externalIds: Map<String, String> = emptyMap(),

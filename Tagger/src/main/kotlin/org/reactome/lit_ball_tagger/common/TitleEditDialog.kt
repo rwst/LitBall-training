@@ -8,7 +8,7 @@ import kotlin.reflect.KFunction1
 
 @Composable
 fun TitleEditDialog(
-    item: Title,
+    item: Paper,
     onCloseClicked: KFunction0<Unit>,
     onTextChanged: KFunction1<String, Unit>,
     onDoneChanged: () -> Unit

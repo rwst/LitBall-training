@@ -26,15 +26,14 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.reactome.lit_ball_tagger.common.CurrentTitleList
-import org.reactome.lit_ball_tagger.common.Title
+import org.reactome.lit_ball_tagger.common.Paper
 
 val MARGIN_SCROLLBAR: Dp = 0.dp
 @Suppress("FunctionName")
 @Composable
 internal fun MainContent(
     modifier: Modifier = Modifier,
-    items: CurrentTitleList,
+    items: MutableList<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
     onRailItemClicked: List<() -> Unit>,
@@ -56,7 +55,7 @@ internal fun MainContent(
 
 @Composable
 private fun ListContent(
-    items: CurrentTitleList,
+    items: MutableList<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
 ) {
@@ -64,7 +63,7 @@ private fun ListContent(
         val listState = rememberLazyListState()
 
         LazyColumn(state = listState) {
-            items(items.list) { item ->
+            items(items) { item ->
                 Item(
                     item = item,
                     onClicked = { onItemClicked(item.id) },
@@ -84,7 +83,7 @@ private fun ListContent(
 
 @Composable
 private fun Item(
-    item: Title,
+    item: Paper,
     onClicked: () -> Unit,
     onDeleteClicked: () -> Unit
 ) {
@@ -92,7 +91,7 @@ private fun Item(
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = AnnotatedString(item.text),
+            text = AnnotatedString(item.details.title),
             modifier = Modifier.weight(1F).align(Alignment.CenterVertically),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis

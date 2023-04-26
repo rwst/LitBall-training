@@ -19,17 +19,17 @@ internal class RootStore {
         setState { copy(doImport = true) }
     }
     private fun buttonExport() {
-        CurrentTitleList.export()
+        CurrentPaperList.export()
     }
     private fun buttonSave() {
-        CurrentTitleList.save()
+        setState { copy(doSave = true) }
     }
     private fun buttonSettings() {
     }
     private fun buttonExit() {
     }
     fun onItemClicked(id: Int) {
-        setState { copy(editingItemId = id) }
+//        setState { copy(editingItemId = id) }
     }
 
     fun onItemDeleteClicked(id: Int) {
@@ -41,9 +41,9 @@ internal class RootStore {
     }
 
     fun onEditorTextChanged(text: String) {
-        setState {
-            updateItem(id = requireNotNull(editingItemId)) { it.copy(text = text) }
-        }
+//        setState {
+//            updateItem(id = requireNotNull(editingItemId)) { it.copy(text = text) }
+//        }
     }
 
     fun onEditorDoneChanged(/*isDone: Boolean*/) {
@@ -55,19 +55,22 @@ internal class RootStore {
     }
 
     fun onNewFileDoneChanged() {
-        setState { copy(newList = false) }
+        setState { copy(items = CurrentPaperList.list, newList = false) }
     }
     fun onImportDoneChanged() {
-        setState { copy(doImport = false) }
+        setState { copy(items = CurrentPaperList.list, doImport = false) }
+    }
+    fun onSaveDoneChanged() {
+        setState { copy(doSave = false) }
     }
     fun onItemsChanged() {
-        setState { copy(items = CurrentTitleList) }
+        setState { copy(items = CurrentPaperList.list) }
     }
     fun onSettingsChanged(settings: Settings) {
         setState { copy(settings = settings) }
     }
-    private fun RootState.updateItem(id: Int, transformer: (Title) -> Title): RootState =
-        copy(items = items.updateItem(id = id, transformer = transformer))
+//    private fun RootState.updateItem(id: Int, transformer: (Paper) -> Paper): RootState =
+//        copy(items = items.updateItem(id = id, transformer = transformer))
 
     private fun initialState(): RootState = RootState()
 
@@ -76,13 +79,14 @@ internal class RootStore {
     }
 
     data class RootState(
-        val items: CurrentTitleList = CurrentTitleList,
+        val items: MutableList<Paper> = CurrentPaperList.list,
         val settings: Settings = Settings,
         val activeRailItem: String = "",
         val editingItemId: Int? = null,
         val editingSettings: Boolean = false,
         val newList: Boolean = false,
         val doImport: Boolean = false,
+        val doSave: Boolean = false,
     )
 }
 

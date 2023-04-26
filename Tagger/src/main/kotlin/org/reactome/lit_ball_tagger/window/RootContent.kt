@@ -32,7 +32,7 @@ fun RootContent(modifier: Modifier = Modifier) {
 
     state.editingItemId?.also { item ->
         TitleEditDialog(
-            item = state.items.list[item],
+            item = state.items[item],
             onCloseClicked = model::onEditorCloseClicked,
             onTextChanged = model::onEditorTextChanged,
             onDoneChanged = model::onEditorDoneChanged,
@@ -49,7 +49,7 @@ fun RootContent(modifier: Modifier = Modifier) {
             state.settings.map["list-path"],
             onResult = {
                 scope.launch (Dispatchers.IO) {
-                    state.items.new(it)
+                    CurrentPaperList.new(it)
                     (model::onItemsChanged)()
                 } },
             onDoneChanged = model::onNewFileDoneChanged,
@@ -60,10 +60,16 @@ fun RootContent(modifier: Modifier = Modifier) {
             state.settings.map["import-path"],
             onResult = {
                 scope.launch (Dispatchers.IO) {
-                    state.items.import(it)
+                    CurrentPaperList.import(it)
                     (model::onItemsChanged)()
                 } },
             onDoneChanged = model::onImportDoneChanged,
         )
+    }
+    if (state.doSave) {
+        scope.launch (Dispatchers.IO) {
+            (model::onSaveDoneChanged)()
+            CurrentPaperList.save()
+        }
     }
 }
