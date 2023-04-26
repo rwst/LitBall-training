@@ -16,7 +16,7 @@ object S2Service {
 
     object RetrofitHelper {
 
-        private const val baseUrl = "https://api.semanticscholar.org/graph/v1"
+        private const val baseUrl = "https://api.semanticscholar.org/"
         private var logging = HttpLoggingInterceptor()
 
         fun getInstance(): Retrofit {
@@ -38,22 +38,22 @@ object S2Service {
         val title: String = "",
         val abstract: String = "",
         val publicationTypes: List<String> = emptyList(),
-        val tldr: String = "",
+        val tldr: Map<String, String> = emptyMap(),
     )
 
     data class BulkPaperDetails (var list: List<PaperDetails> = emptyList())
 
     interface SinglePaperApi {
-        @GET("/paper/{paper_id}")
+        @GET("/graph/v1/paper/{paper_id}")
         suspend fun get(
-            @Field("fields") fields: String,
             @Path("paper_id") paperId: String,
+            @Query("fields") fields: String,
         ): Response<PaperDetails>
     }
 
     interface BulkPaperApi {
         @FormUrlEncoded
-        @POST("/paper/batch")
+        @POST("/graph/v1/paper/batch")
         suspend fun postRequest(
             @Body ids: Set<String>,
             @Field("fields") fields: String,
@@ -62,7 +62,7 @@ object S2Service {
 
     suspend fun getPaperDetails(paperId: String, fields: String): PaperDetails? {
         val singlePaperApi = RetrofitHelper.getInstance().create(SinglePaperApi::class.java)
-        val result = singlePaperApi.get(fields, paperId)
+        val result = singlePaperApi.get(paperId, fields)
         if (result.isSuccessful) {
             Logger.i(TAG, result.body().toString())
             return result.body()
