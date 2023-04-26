@@ -23,7 +23,6 @@ fun FileChooserDialog(
     if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
         val file = fileChooser.selectedFile
         onResult(file)
-    } else {
-        onDoneChanged()
     }
+    onDoneChanged()
 }
