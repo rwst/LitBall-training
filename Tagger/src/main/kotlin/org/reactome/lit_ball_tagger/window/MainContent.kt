@@ -33,7 +33,7 @@ val MARGIN_SCROLLBAR: Dp = 0.dp
 @Composable
 internal fun MainContent(
     modifier: Modifier = Modifier,
-    items: MutableList<Paper>,
+    items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
     onRailItemClicked: List<() -> Unit>,
@@ -55,7 +55,7 @@ internal fun MainContent(
 
 @Composable
 private fun ListContent(
-    items: MutableList<Paper>,
+    items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
 ) {
