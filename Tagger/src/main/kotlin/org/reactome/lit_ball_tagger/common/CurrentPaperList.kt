@@ -27,7 +27,9 @@ object CurrentPaperList {
         }
         path = p
         Settings.save()
-        list = Json.decodeFromStream<MutableList<Paper>>(File(p).inputStream())
+        val f = File(p)
+        if (f.exists())
+            list = Json.decodeFromStream<MutableList<Paper>>(File(p).inputStream())
         return this
     }
     fun save() {
@@ -42,16 +44,15 @@ object CurrentPaperList {
             Settings.map["import-path"] = file.absolutePath
             Settings.save()
             return this
-        }
-        else {
+        } else {
             Settings.map["import-path"] = file.absolutePath.substringBeforeLast('/')
             Settings.save()
         }
         val lines = file.readLines()
-        val pd = S2client.getDataFor(lines[0])
-        val maxId: Int = list.maxOfOrNull { it.id }?: 0
-        if (pd != null)
-            list.add(Paper(maxId + 1, pd, Tag.Exp) )
+        val maxId: Int = list.maxOfOrNull { it.id } ?: 0
+        S2client.getDataFor(lines)?.mapIndexed { index, paperDetails ->
+            list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
+        }
         return this
     }
 }

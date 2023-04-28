@@ -42,8 +42,6 @@ object S2Service {
         val tldr: Map<String, String> = emptyMap(),
     )
 
-    data class BulkPaperDetails (var list: List<PaperDetails> = emptyList())
-
     interface SinglePaperApi {
         @GET("/graph/v1/paper/{paper_id}")
         suspend fun get(
@@ -53,12 +51,11 @@ object S2Service {
     }
 
     interface BulkPaperApi {
-        @FormUrlEncoded
         @POST("/graph/v1/paper/batch")
         suspend fun postRequest(
-            @Body ids: Set<String>,
-            @Field("fields") fields: String,
-        ): Response<BulkPaperDetails>
+            @Body ids: Map<String, @JvmSuppressWildcards List<Any>>,
+            @Query("fields") fields: String,
+        ): Response<List<PaperDetails>>
     }
 
     suspend fun getPaperDetails(paperId: String, fields: String): PaperDetails? {
@@ -71,10 +68,11 @@ object S2Service {
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
         return null
     }
-
-    suspend fun getBulkPaperDetails(ids: Set<String>, fields: String): BulkPaperDetails? {
+    @JvmSuppressWildcards
+    suspend fun getBulkPaperDetails(ids: List<String>, fields: String): List<PaperDetails>? {
         val bulkPaperApi = RetrofitHelper.getInstance().create(BulkPaperApi::class.java)
-        val result = bulkPaperApi.postRequest(ids, fields)
+        val map = mapOf("ids" to ids)
+        val result = bulkPaperApi.postRequest(map, fields)
         if (result.isSuccessful) {
             Logger.i(TAG, result.body().toString())
             return result.body()
