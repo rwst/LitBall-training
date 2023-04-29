@@ -2,6 +2,7 @@
 
 package org.reactome.lit_ball_tagger.window
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.foundation.VerticalScrollbar
@@ -17,12 +18,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.runBlocking
 import org.reactome.lit_ball_tagger.common.Paper
 import org.reactome.lit_ball_tagger.common.Tag
 
@@ -51,6 +60,7 @@ internal fun MainContent(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun ListContent(
     items: List<Paper>,
@@ -60,16 +70,48 @@ private fun ListContent(
     Box {
         val listState = rememberLazyListState()
 
-        LazyColumn(state = listState) {
-            items(items) { item ->
-                CardWithTextIconAndRadiobutton(
-                    item = item,
-                    onClicked = { onItemClicked(item.id) },
-                    onDeleteClicked = { onItemDeleteClicked(item.id) },
-                    onOptionSelected = {},
-                )
+        // Handle keyboard events to scroll the list
+        val scrollState = remember { ScrollState(0) }
+        val onKeyDownSuspend: suspend (KeyEvent) -> Boolean = {
+            when (it.key) {
+                Key.DirectionUp -> {
+                    scrollState.scrollTo(scrollState.value - 1)
+                    true
+                }
+                Key.DirectionDown -> {
+                    scrollState.scrollTo(scrollState.value + 1)
+                    true
+                }
+                else -> false
+            }
+        }
+        val onKeyDown: (KeyEvent) -> Boolean = {
+            runBlocking { onKeyDownSuspend(it) }
+        }
 
-                Divider()
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Listen for keyboard events
+            val focusRequester = remember { FocusRequester() }
+            DisposableEffect(Unit) {
+                focusRequester.requestFocus()
+                onDispose { }
+            }
+            Box(modifier = Modifier.focusRequester(focusRequester).fillMaxSize()) {
+                // Display the list
+                LazyColumn(state = listState,
+                    modifier = Modifier.fillMaxSize().onPreviewKeyEvent(onKeyDown)
+                ) {
+                    items(items) { item ->
+                        CardWithTextIconAndRadiobutton(
+                            item = item,
+                            onClicked = { onItemClicked(item.id) },
+                            onDeleteClicked = { onItemDeleteClicked(item.id) },
+                            onOptionSelected = {},
+                        )
+
+                        Divider()
+                    }
+                }
             }
         }
 
@@ -156,74 +198,3 @@ fun RadioButtonOptions(
         }
     }
 }
-
-/*
-@Composable
-private fun Item(
-    item: Paper,
-    onClicked: () -> Unit,
-    onDeleteClicked: () -> Unit
-) {
-    Row(modifier = Modifier.clickable(onClick = onClicked)) {
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Text(
-            text = AnnotatedString(item.details.title),
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.weight(1F).align(Alignment.CenterVertically),
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Column {
-            TagsRadioButtons(item.tag)
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        IconButton(onClick = onDeleteClicked) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = null
-            )
-        }
-
-        Spacer(modifier = Modifier.width(MARGIN_SCROLLBAR))
-    }
-}
-
-@Composable
-fun TagsRadioButtons(tag: Tag) {
-    val radioOptions = Tag.values().map { it.name }
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(tag.name) }
-    Column {
-        radioOptions.forEach { text ->
-            Row(
-                Modifier
-                    .fillMaxWidth()
-//                    .selectableGroup()
-                    .selectable(
-                        selected = (text == selectedOption),
-                        onClick = {
-                            onOptionSelected(text)
-                        }
-                    )
-                    .padding(horizontal = 6.dp)
-            ) {
-                RadioButton(
-                    selected = (text == selectedOption),
-                    onClick = { onOptionSelected(text) }
-                )
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.body1.merge(),
-                    modifier = Modifier.padding(start = 10.dp)
-                )
-            }
-        }
-    }
-}
-*/
