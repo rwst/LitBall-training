@@ -45,7 +45,15 @@ object CurrentPaperList {
         val text = Json.encodeToString(list)
         File(pathStr).writeText(text)
     }
-    fun export() {}
+    fun export() {
+        if (path == null) return
+        val pathStr: String = path as String
+        for (tag in Tag.values()) {
+            val tagged = list.filter { it.tag == tag }
+            val text = Json.encodeToString(tagged)
+            File(pathStr + '-' + tag.name).writeText(text)
+        }
+    }
     suspend fun import(file: File): CurrentPaperList {
         if (file.isDirectory) {
             Settings.map["import-path"] = file.absolutePath
