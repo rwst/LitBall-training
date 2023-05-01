@@ -157,7 +157,7 @@ fun CardWithTextIconAndRadiobutton(
             }
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = cardTitle,
+                text = cardTitle ?: "",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1F).align(Alignment.CenterVertically),

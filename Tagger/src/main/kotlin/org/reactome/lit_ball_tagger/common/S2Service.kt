@@ -34,12 +34,12 @@ object S2Service {
     // Max supported fields: "paperId, externalIds, title, abstract, publicationTypes, tldr"
     @Serializable
     data class PaperDetails (
-        val paperId: String = "",
-        val externalIds: Map<String, String> = emptyMap(),
-        val title: String = "",
-        val abstract: String = "",
-        val publicationTypes: List<String> = emptyList(),
-        val tldr: Map<String, String> = emptyMap(),
+        val paperId: String? = "",
+        val externalIds: Map<String, String>? = emptyMap(),
+        val title: String? = "",
+        val abstract: String? = "",
+        val publicationTypes: List<String>? = emptyList(),
+        val tldr: Map<String, String>? = emptyMap(),
     )
 
     interface SinglePaperApi {
@@ -69,7 +69,7 @@ object S2Service {
         return null
     }
     @JvmSuppressWildcards
-    suspend fun getBulkPaperDetails(ids: List<String>, fields: String): List<PaperDetails>? {
+    suspend fun getBulkPaperDetails(ids: List<String>, fields: String): List<PaperDetails?>? {
         val bulkPaperApi = RetrofitHelper.getInstance().create(BulkPaperApi::class.java)
         val map = mapOf("ids" to ids)
         val result = bulkPaperApi.postRequest(map, fields)

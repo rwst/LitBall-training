@@ -46,6 +46,7 @@ object CurrentPaperList {
     fun save() {
         if (path == null) return
         val pathStr: String = path as String
+        println(list)
         val text = Json.encodeToString(list)
         File(pathStr).writeText(text)
     }
@@ -68,10 +69,11 @@ object CurrentPaperList {
                 Settings.map["import-path"] = file.absolutePath.substringBeforeLast('/')
                 Settings.save()
             }
-            val lines = file.readLines()
+            val lines = file.readLines().filter { it.isNotBlank() }
             val maxId: Int = list.maxOfOrNull { it.id } ?: 0
             S2client.getDataFor(lines)?.mapIndexed { index, paperDetails ->
-                list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
+                if (paperDetails != null)
+                  list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
             }
         }
         updateShadowMap()
