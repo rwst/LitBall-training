@@ -26,6 +26,7 @@ fun RootContent(modifier: Modifier = Modifier) {
         items = state.items,
         onItemClicked = model::onItemClicked,
         onItemDeleteClicked = model::onItemDeleteClicked,
+        onItemRadioButtonClicked = model::onItemRadioButtonClicked,
         onRailItemClicked = model.onRailItemClicked
     )
 

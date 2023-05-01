@@ -7,10 +7,16 @@ import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 
 object CurrentPaperList {
-    var list: MutableList<Paper> = mutableListOf()
+    private var list: MutableList<Paper> = mutableListOf()
     private var path: String? = null
-    fun updateItem(id: Int, transformer: (Paper) -> Paper) : CurrentPaperList {
-        list.replaceFirst (transformer) { it.id == id }
+    private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
+    fun toList(): List<Paper> { return list.toList() }
+    private fun updateShadowMap() {
+        list.forEachIndexed { index, paper -> shadowMap[paper.id] = index }
+    }
+    private fun updateItem(id: Int, transformer: (Paper) -> Paper) : CurrentPaperList {
+        val index = shadowMap[id] ?: return this
+        list[index] = transformer(list[index])
         return this
     }
 
@@ -30,6 +36,7 @@ object CurrentPaperList {
         val f = File(p)
         if (f.exists())
             list = Json.decodeFromStream<MutableList<Paper>>(File(p).inputStream())
+            updateShadowMap()
         return this
     }
     fun save() {
@@ -53,6 +60,15 @@ object CurrentPaperList {
         S2client.getDataFor(lines)?.mapIndexed { index, paperDetails ->
             list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
         }
+        updateShadowMap()
         return this
+    }
+    fun setTag(id: Int, btn: Int) {
+        val newTag = Tag.values()[btn]
+        updateItem(id
+        ) {
+            it.tag = newTag
+            return@updateItem it
+        }
     }
 }

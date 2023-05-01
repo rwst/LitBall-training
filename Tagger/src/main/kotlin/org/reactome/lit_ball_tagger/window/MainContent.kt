@@ -36,6 +36,7 @@ internal fun MainContent(
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
+    onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     onRailItemClicked: List<() -> Unit>,
 ) {
     Row(modifier) {
@@ -46,7 +47,8 @@ internal fun MainContent(
         ListContent(
             items = items,
             onItemClicked = onItemClicked,
-            onItemDeleteClicked = onItemDeleteClicked
+            onItemDeleteClicked = onItemDeleteClicked,
+            onItemRadioButtonClicked = onItemRadioButtonClicked,
         )
     }
 }
@@ -57,6 +59,7 @@ fun ListContent(
     items: List<Paper>,
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
+    onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
@@ -110,7 +113,7 @@ fun ListContent(
                     item = item,
                     onClicked = { onItemClicked(item.id) },
                     onDeleteClicked = { onItemDeleteClicked(item.id) },
-                    onOptionSelected = {},
+                    onOptionSelected = { btn -> onItemRadioButtonClicked(item.id, btn) },
                 )
                 Divider()
             }
@@ -128,8 +131,8 @@ fun ListContent(
 fun CardWithTextIconAndRadiobutton(
     item: Paper,
     onClicked: () -> Unit,
-    onOptionSelected: (Int) -> Unit,
     onDeleteClicked: () -> Unit,
+    onOptionSelected: (btn: Int) -> Unit,
 ) {
     val cardTitle = item.details.title
     val radioButtonOptions = Tag.values().map { it.name }
@@ -165,7 +168,7 @@ fun CardWithTextIconAndRadiobutton(
             RadioButtonOptions(
                 radioButtonOptions,
                 item.tag.ordinal,
-                onOptionSelected
+                onOptionSelected,
             )
         }
     }

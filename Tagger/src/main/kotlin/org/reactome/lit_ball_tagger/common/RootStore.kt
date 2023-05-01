@@ -36,6 +36,10 @@ internal class RootStore {
 //        setState { copy(items = TitleList(items.list.filterNot { it.id == id }.toMutableList())) }
     }
 
+    fun onItemRadioButtonClicked(id: Int, btn: Int) {
+        CurrentPaperList.setTag(id, btn)
+    }
+
     fun onEditorCloseClicked() {
         setState { copy(editingItemId = null) }
     }
@@ -55,16 +59,16 @@ internal class RootStore {
     }
 
     fun onNewFileDoneChanged() {
-        setState { copy(items = CurrentPaperList.list.toList(), newList = false) }
+        setState { copy(items = CurrentPaperList.toList(), newList = false) }
     }
     fun onImportDoneChanged() {
-        setState { copy(items = CurrentPaperList.list.toList(), doImport = false) }
+        setState { copy(items = CurrentPaperList.toList(), doImport = false) }
     }
     fun onSaveDoneChanged() {
         setState { copy(doSave = false) }
     }
     fun onItemsChanged() {
-        setState { copy(items = CurrentPaperList.list.toList()) }
+        setState { copy(items = CurrentPaperList.toList()) }
     }
     fun onSettingsChanged(settings: Settings) {
         setState { copy(settings = settings) }
@@ -79,7 +83,7 @@ internal class RootStore {
     }
 
     data class RootState(
-        val items: List<Paper> = CurrentPaperList.list,
+        val items: List<Paper> = CurrentPaperList.toList(),
         val settings: Settings = Settings,
         val activeRailItem: String = "",
         val editingItemId: Int? = null,

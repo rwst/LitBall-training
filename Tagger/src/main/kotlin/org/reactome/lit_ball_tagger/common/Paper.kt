@@ -9,7 +9,7 @@ enum class Tag {
     @SerialName("DRUG") Drug,
 }
 @Serializable
-class Paper(val id: Int, val details: S2Service.PaperDetails, val tag: Tag)
+class Paper(val id: Int, val details: S2Service.PaperDetails, var tag: Tag)
 {
 
     override fun toString(): String {
