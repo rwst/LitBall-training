@@ -8,7 +8,7 @@ import java.io.File
 @Composable
 internal fun ImportDialog(
     startPath: String?,
-    onResult: (file: File) -> Job,
+    onResult: (file: List<File>) -> Job,
     onDoneChanged: () -> Unit,
 )
 {

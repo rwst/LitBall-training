@@ -21,22 +21,26 @@ object CurrentPaperList {
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun new(file: File): CurrentPaperList {
-        val p: String
-        if (file.isDirectory) {
-            Settings.map["list-path"] = file.absolutePath
-            p = file.absolutePath + "/Untitled"
+    fun new(files: List<File>): CurrentPaperList {
+        for (file in files) {
+            val p: String
+            if (file.isDirectory) {
+                Settings.map["list-path"] = file.absolutePath
+                p = file.absolutePath + "/Untitled"
+            } else {
+                Settings.map["list-path"] = file.absolutePath.substringBeforeLast('/')
+                p = file.absolutePath
+            }
+            path = p
+            Settings.save()
+            val f = File(p)
+            if (f.exists())
+                if (list.isEmpty())
+                    list = Json.decodeFromStream<MutableList<Paper>>(File(p).inputStream())
+                else
+                    list.addAll(Json.decodeFromStream<MutableList<Paper>>(File(p).inputStream()))
         }
-        else {
-            Settings.map["list-path"] = file.absolutePath.substringBeforeLast('/')
-            p = file.absolutePath
-        }
-        path = p
-        Settings.save()
-        val f = File(p)
-        if (f.exists())
-            list = Json.decodeFromStream<MutableList<Paper>>(File(p).inputStream())
-            updateShadowMap()
+        updateShadowMap()
         return this
     }
     fun save() {
@@ -54,19 +58,21 @@ object CurrentPaperList {
             File(pathStr + '-' + tag.name).writeText(text)
         }
     }
-    suspend fun import(file: File): CurrentPaperList {
-        if (file.isDirectory) {
-            Settings.map["import-path"] = file.absolutePath
-            Settings.save()
-            return this
-        } else {
-            Settings.map["import-path"] = file.absolutePath.substringBeforeLast('/')
-            Settings.save()
-        }
-        val lines = file.readLines()
-        val maxId: Int = list.maxOfOrNull { it.id } ?: 0
-        S2client.getDataFor(lines)?.mapIndexed { index, paperDetails ->
-            list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
+    suspend fun import(files: List<File>): CurrentPaperList {
+        for (file in files) {
+            if (file.isDirectory) {
+                Settings.map["import-path"] = file.absolutePath
+                Settings.save()
+                return this
+            } else {
+                Settings.map["import-path"] = file.absolutePath.substringBeforeLast('/')
+                Settings.save()
+            }
+            val lines = file.readLines()
+            val maxId: Int = list.maxOfOrNull { it.id } ?: 0
+            S2client.getDataFor(lines)?.mapIndexed { index, paperDetails ->
+                list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
+            }
         }
         updateShadowMap()
         return this

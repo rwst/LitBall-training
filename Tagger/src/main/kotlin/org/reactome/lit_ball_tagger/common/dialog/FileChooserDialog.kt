@@ -11,7 +11,7 @@ import javax.swing.filechooser.FileSystemView
 fun FileChooserDialog(
     title: String,
     path: String?,
-    onResult: (file: File) -> Job,
+    onResult: (file: List<File>) -> Job,
     onDoneChanged: () -> Unit,
 ) {
     val fileChooser = JFileChooser(FileSystemView.getFileSystemView())
@@ -20,9 +20,11 @@ fun FileChooserDialog(
     fileChooser.fileSelectionMode = JFileChooser.FILES_AND_DIRECTORIES
     fileChooser.isAcceptAllFileFilterUsed = true
     fileChooser.selectedFile = null
+    fileChooser.isMultiSelectionEnabled = true
+
     if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-        val file = fileChooser.selectedFile
-        onResult(file)
+        val files = fileChooser.selectedFiles
+        onResult(files.toList())
     }
     onDoneChanged()
 }
