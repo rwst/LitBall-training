@@ -104,18 +104,26 @@ fun ListContent(
             .clickable { focusRequester.requestFocus() }
             .onPreviewKeyEvent(onKeyDown)
     ) {
-        LazyColumn(
-            Modifier.fillMaxSize().padding(end = 12.dp),
-            lazyListState
-        ) {
-            items(items) { item ->
-                CardWithTextIconAndRadiobutton(
-                    item = item,
-                    onClicked = { onItemClicked(item.id) },
-                    onDeleteClicked = { onItemDeleteClicked(item.id) },
-                    onOptionSelected = { btn -> onItemRadioButtonClicked(item.id, btn) },
-                )
-                Divider()
+        Column {
+            TextButton(
+                onClick = {},
+                modifier = Modifier.padding(0.dp)
+            ) {
+                Text(lazyListState.firstVisibleItemIndex.toString() + '/' + items.size.toString())
+            }
+            LazyColumn(
+                Modifier.fillMaxSize().padding(end = 12.dp),
+                lazyListState
+            ) {
+                items(items) { item ->
+                    CardWithTextIconAndRadiobutton(
+                        item = item,
+                        onClicked = { onItemClicked(item.id) },
+                        onDeleteClicked = { onItemDeleteClicked(item.id) },
+                        onOptionSelected = { btn -> onItemRadioButtonClicked(item.id, btn) },
+                    )
+                    Divider()
+                }
             }
         }
         VerticalScrollbar(
