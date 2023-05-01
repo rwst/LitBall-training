@@ -144,7 +144,7 @@ fun CardWithTextIconAndRadiobutton(
             .fillMaxWidth()
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(0.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onDeleteClicked) {
