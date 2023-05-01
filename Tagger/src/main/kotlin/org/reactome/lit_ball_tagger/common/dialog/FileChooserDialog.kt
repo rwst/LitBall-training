@@ -1,4 +1,4 @@
-package org.reactome.lit_ball_tagger.common
+package org.reactome.lit_ball_tagger.common.dialog
 
 import androidx.compose.runtime.Composable
 import kotlinx.coroutines.Job

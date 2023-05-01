@@ -10,7 +10,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball_tagger.common.*
 import org.reactome.lit_ball_tagger.common.RootStore
-import org.reactome.lit_ball_tagger.common.SettingsDialog
+import org.reactome.lit_ball_tagger.common.dialog.SettingsDialog
+import org.reactome.lit_ball_tagger.common.dialog.ImportDialog
+import org.reactome.lit_ball_tagger.common.dialog.NewListDialog
+import org.reactome.lit_ball_tagger.common.dialog.TitleEditDialog
 
 @Composable
 fun RootContent(modifier: Modifier = Modifier) {
