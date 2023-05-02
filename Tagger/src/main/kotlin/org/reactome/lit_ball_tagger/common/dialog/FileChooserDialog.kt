@@ -1,7 +1,6 @@
 package org.reactome.lit_ball_tagger.common.dialog
 
 import androidx.compose.runtime.Composable
-import kotlinx.coroutines.Job
 import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileSystemView
@@ -11,7 +10,7 @@ import javax.swing.filechooser.FileSystemView
 fun FileChooserDialog(
     title: String,
     path: String?,
-    onResult: (file: List<File>) -> Job,
+    onResult: (file: List<File>) -> Unit,
     onDoneChanged: () -> Unit,
 ) {
     val fileChooser = JFileChooser(FileSystemView.getFileSystemView())

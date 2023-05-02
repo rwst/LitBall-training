@@ -1,14 +1,13 @@
 package org.reactome.lit_ball_tagger.common.dialog
 
 import androidx.compose.runtime.Composable
-import kotlinx.coroutines.Job
 import java.io.File
 
 @Suppress("FunctionName")
 @Composable
 internal fun ImportDialog(
     startPath: String?,
-    onResult: (file: List<File>) -> Job,
+    onResult: (file: List<File>) -> Unit,
     onDoneChanged: () -> Unit,
 )
 {

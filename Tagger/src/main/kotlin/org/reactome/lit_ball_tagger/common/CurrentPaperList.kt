@@ -35,11 +35,14 @@ object CurrentPaperList {
             path = p
             Settings.save()
             val f = File(p)
-            if (f.exists())
+            if (f.exists()) {
                 if (list.isEmpty())
                     list = Json.decodeFromStream<MutableList<Paper>>(File(p).inputStream())
                 else
                     list.addAll(Json.decodeFromStream<MutableList<Paper>>(File(p).inputStream()))
+            }
+            else
+                list = mutableListOf()
         }
         updateShadowMap()
         return this

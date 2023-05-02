@@ -2,9 +2,7 @@
 
 package org.reactome.lit_ball_tagger.window
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,7 +53,8 @@ fun RootContent(modifier: Modifier = Modifier) {
                 scope.launch (Dispatchers.IO) {
                     CurrentPaperList.new(it)
                     (model::onItemsChanged)()
-                } },
+                }
+            },
             onDoneChanged = model::onNewFileDoneChanged,
         )
     }
