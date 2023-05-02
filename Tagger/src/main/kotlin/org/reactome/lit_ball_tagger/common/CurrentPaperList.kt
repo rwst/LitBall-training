@@ -5,6 +5,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
+import java.util.*
 
 object CurrentPaperList {
     private var list: MutableList<Paper> = mutableListOf()
@@ -69,12 +70,17 @@ object CurrentPaperList {
                 Settings.map["import-path"] = file.absolutePath.substringBeforeLast('/')
                 Settings.save()
             }
-            val lines = file.readLines().filter { it.isNotBlank() }
+            val lines = file.readLines().filter { it.isNotBlank() }.map { it.uppercase(Locale.ENGLISH).trimEnd() }
+            val doisRequested = lines.toMutableSet()
             val maxId: Int = list.maxOfOrNull { it.id } ?: 0
             S2client.getDataFor(lines)?.mapIndexed { index, paperDetails ->
-                if (paperDetails != null)
-                  list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
+                if (paperDetails != null) {
+                    list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
+                    doisRequested.remove(paperDetails.externalIds?.get("DOI").toString().uppercase(Locale.ENGLISH))
+                }
             }
+            if (doisRequested.isNotEmpty())
+                File(file.absolutePath + "-DOIs-not-found").writeText(doisRequested.toString())
         }
         updateShadowMap()
         return this
