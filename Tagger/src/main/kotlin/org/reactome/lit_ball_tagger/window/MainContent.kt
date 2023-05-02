@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.runBlocking
+import org.reactome.lit_ball_tagger.common.CurrentPaperList
 import org.reactome.lit_ball_tagger.common.Paper
 import org.reactome.lit_ball_tagger.common.Tag
 
@@ -109,7 +110,7 @@ fun ListContent(
                 onClick = {},
                 modifier = Modifier.padding(0.dp)
             ) {
-                Text(lazyListState.firstVisibleItemIndex.toString() + '/' + items.size.toString())
+                Text(CurrentPaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + items.size.toString())
             }
             LazyColumn(
                 Modifier.fillMaxSize().padding(end = 12.dp),

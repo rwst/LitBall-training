@@ -10,6 +10,7 @@ import java.util.*
 object CurrentPaperList {
     private var list: MutableList<Paper> = mutableListOf()
     private var path: String? = null
+    var fileName: String = ""
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
     fun toList(): List<Paper> { return list.toList() }
     private fun updateShadowMap() {
@@ -27,10 +28,12 @@ object CurrentPaperList {
             val p: String
             if (file.isDirectory) {
                 Settings.map["list-path"] = file.absolutePath
-                p = file.absolutePath + "/Untitled"
+                fileName = "/Untitled"
+                p = file.absolutePath + fileName
             } else {
                 Settings.map["list-path"] = file.absolutePath.substringBeforeLast('/')
                 p = file.absolutePath
+                fileName = file.name
             }
             path = p
             Settings.save()
