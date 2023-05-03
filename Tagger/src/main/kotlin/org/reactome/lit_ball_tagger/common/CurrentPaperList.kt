@@ -109,7 +109,14 @@ object CurrentPaperList {
                 Settings.map["import-path"] = file.absolutePath.substringBeforeLast('/')
                 Settings.save()
             }
-            val lines = file.readLines().filter { it.isNotBlank() }.map { it.uppercase(Locale.ENGLISH).removeSuffix("^M").trimEnd() }
+            val lines = file
+                .readLines()
+                .filter { it.isNotBlank() }
+                .map { it.uppercase(Locale.ENGLISH)
+                    .removeSuffix("^M")
+                    .trimEnd() }
+                .toSet()
+                .toList()
             val doisRequested = lines.toMutableSet()
             val chunkSize = 450
             for (n in 1..(lines.size + chunkSize - 1)/chunkSize) {
