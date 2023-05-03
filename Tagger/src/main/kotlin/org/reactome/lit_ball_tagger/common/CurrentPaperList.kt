@@ -111,9 +111,9 @@ object CurrentPaperList {
             }
             val lines = file.readLines().filter { it.isNotBlank() }.map { it.uppercase(Locale.ENGLISH).removeSuffix("^M").trimEnd() }
             val doisRequested = lines.toMutableSet()
-            val maxId: Int = list.maxOfOrNull { it.id } ?: 0
             val chunkSize = 450
             for (n in 1..(lines.size + chunkSize - 1)/chunkSize) {
+                val maxId: Int = list.maxOfOrNull { it.id } ?: 0
                 val upper = min(n * chunkSize - 1, lines.size - 1)
                 val lower = (n-1) * chunkSize
                 S2client.getDataFor(lines.subList(lower, upper + 1))?.mapIndexed { index, paperDetails ->
