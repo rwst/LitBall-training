@@ -82,6 +82,7 @@ object CurrentPaperList {
             else
                 list = mutableListOf()
         }
+        list.sortBy { it.details.title }
         updateShadowMap()
         return this
     }
