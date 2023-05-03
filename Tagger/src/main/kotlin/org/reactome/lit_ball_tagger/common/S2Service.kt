@@ -35,11 +35,11 @@ object S2Service {
     @Serializable
     data class PaperDetails (
         val paperId: String? = "",
-        val externalIds: Map<String, String>? = emptyMap(),
+        var externalIds: Map<String, String>? = emptyMap(),
         val title: String? = "",
         val abstract: String? = "",
-        val publicationTypes: List<String>? = emptyList(),
-        val tldr: Map<String, String>? = emptyMap(),
+        var publicationTypes: List<String>? = emptyList(),
+        var tldr: Map<String, String>? = emptyMap(),
     )
 
     interface SinglePaperApi {

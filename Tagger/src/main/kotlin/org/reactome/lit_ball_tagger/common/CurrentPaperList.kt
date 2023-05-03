@@ -22,6 +22,35 @@ object CurrentPaperList {
         list[index] = transformer(list[index])
         return this
     }
+    @Suppress("SENSELESS_COMPARISON")
+    private fun sanitize() {
+        list.forEachIndexed { index, paper ->
+            val newPaper: Paper = paper
+            var isChanged = false
+            val extIds = paper.details.externalIds?.toMutableMap()
+            if (extIds != null) {
+                for (entry in extIds.entries) {
+                    if (entry.value == null) {
+                        extIds.remove(entry.key)
+                        newPaper.details.externalIds = extIds
+                        isChanged = true
+                    }
+                }
+            }
+            val tldr = paper.details.tldr?.toMutableMap()
+            if (tldr != null) {
+                for (entry in tldr.entries) {
+                    if (entry.value == null) {
+                        tldr.remove(entry.key)
+                        newPaper.details.tldr = tldr
+                        isChanged = true
+                    }
+                }
+            }
+            if (isChanged)
+                list[index] = newPaper
+        }
+    }
 
     @OptIn(ExperimentalSerializationApi::class)
     fun new(files: List<File>): CurrentPaperList {
@@ -54,7 +83,6 @@ object CurrentPaperList {
     fun save() {
         if (path == null) return
         val pathStr: String = path as String
-        println(list)
         val text = Json.encodeToString(list)
         File(pathStr).writeText(text)
     }
