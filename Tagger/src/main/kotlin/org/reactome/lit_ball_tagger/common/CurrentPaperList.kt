@@ -16,6 +16,7 @@ object CurrentPaperList {
     fun toList(): List<Paper> { return list.toList() }
     fun toListWithItemRemoved(id: Int): List<Paper> {
         list = list.filterNot { it.id == id }.toMutableList()
+        updateShadowMap()
         return list.toList()
     }
     private fun updateShadowMap() {
