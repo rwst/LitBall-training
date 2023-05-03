@@ -6,6 +6,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 import java.util.*
+import kotlin.math.min
 
 object CurrentPaperList {
     private var list: MutableList<Paper> = mutableListOf()
@@ -79,12 +80,18 @@ object CurrentPaperList {
             val lines = file.readLines().filter { it.isNotBlank() }.map { it.uppercase(Locale.ENGLISH).trimEnd() }
             val doisRequested = lines.toMutableSet()
             val maxId: Int = list.maxOfOrNull { it.id } ?: 0
-            S2client.getDataFor(lines)?.mapIndexed { index, paperDetails ->
-                if (paperDetails != null) {
-                    list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
-                    doisRequested.remove(paperDetails.externalIds?.get("DOI").toString().uppercase(Locale.ENGLISH))
+            val chunkSize = 450
+            for (n in 1..(lines.size + chunkSize - 1)/chunkSize) {
+                val upper = min(n * chunkSize - 1, lines.size - 1)
+                val lower = (n-1) * chunkSize
+                S2client.getDataFor(lines.subList(lower, upper + 1))?.mapIndexed { index, paperDetails ->
+                    if (paperDetails != null) {
+                        list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
+                        doisRequested.remove(paperDetails.externalIds?.get("DOI").toString().uppercase(Locale.ENGLISH))
+                    }
                 }
             }
+            sanitize()
             if (doisRequested.isNotEmpty())
                 File(file.absolutePath + "-DOIs-not-found").writeText(doisRequested.toString())
         }
