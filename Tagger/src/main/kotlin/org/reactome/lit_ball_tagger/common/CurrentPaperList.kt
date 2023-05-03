@@ -105,7 +105,7 @@ object CurrentPaperList {
                 Settings.map["import-path"] = file.absolutePath.substringBeforeLast('/')
                 Settings.save()
             }
-            val lines = file.readLines().filter { it.isNotBlank() }.map { it.uppercase(Locale.ENGLISH).trimEnd() }
+            val lines = file.readLines().filter { it.isNotBlank() }.map { it.uppercase(Locale.ENGLISH).removeSuffix("^M").trimEnd() }
             val doisRequested = lines.toMutableSet()
             val maxId: Int = list.maxOfOrNull { it.id } ?: 0
             val chunkSize = 450
