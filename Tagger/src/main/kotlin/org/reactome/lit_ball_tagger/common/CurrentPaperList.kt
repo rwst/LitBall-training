@@ -14,6 +14,7 @@ object CurrentPaperList {
     var fileName: String = ""
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
     fun toList(): List<Paper> { return list.toList() }
+    fun toListWithItemRemoved(id: Int): List<Paper> { return list.filterNot { it.id == id } }
     private fun updateShadowMap() {
         list.forEachIndexed { index, paper -> shadowMap[paper.id] = index }
     }

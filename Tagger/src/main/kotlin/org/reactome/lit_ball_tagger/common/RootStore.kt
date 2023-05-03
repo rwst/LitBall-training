@@ -33,7 +33,7 @@ internal class RootStore {
     }
 
     fun onItemDeleteClicked(id: Int) {
-//        setState { copy(items = TitleList(items.list.filterNot { it.id == id }.toMutableList())) }
+        setState { copy(items = CurrentPaperList.toListWithItemRemoved(id)) }
     }
 
     fun onItemRadioButtonClicked(id: Int, btn: Int) {
