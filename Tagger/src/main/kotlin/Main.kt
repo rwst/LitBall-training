@@ -19,7 +19,8 @@ fun main() {
         ) {
             MaterialTheme {
                 RootContent(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    onExit = ::exitApplication,
                 )
             }
         }

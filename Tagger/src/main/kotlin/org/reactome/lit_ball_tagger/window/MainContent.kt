@@ -39,10 +39,12 @@ internal fun MainContent(
     onItemDeleteClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     onRailItemClicked: List<() -> Unit>,
+    onExit: () -> Unit,
 ) {
     Row(modifier) {
         Rail(
             onRailItemClicked = onRailItemClicked,
+            onExit,
         )
 
         ListContent(
@@ -66,7 +68,6 @@ fun ListContent(
     val lazyListState = rememberLazyListState()
 
     val onKeyDownSuspend: suspend (KeyEvent) -> Boolean = {
-        println(it.key)
         when (it.type) {
             KeyEventType.KeyUp -> {
                 false

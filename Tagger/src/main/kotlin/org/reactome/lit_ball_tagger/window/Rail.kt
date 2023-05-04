@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 @Composable
 fun Rail(
     onRailItemClicked: List<() -> Unit>,
+    onExit: () -> Unit,
 ) {
     val selectedItem by remember { mutableStateOf(0) }
 // TODO
@@ -54,7 +55,10 @@ fun Rail(
             selected = selectedItem == 5
         )
         NavigationRailItem(
-            onClick = onRailItemClicked[6],
+            onClick = {
+                onRailItemClicked[6]()
+                onExit()
+            },
             icon = { Icon(Icons.Filled.ExitToApp, null) },
             label = { Text("Exit") },
             selected = selectedItem == 6

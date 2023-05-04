@@ -14,7 +14,10 @@ import org.reactome.lit_ball_tagger.common.dialog.NewListDialog
 import org.reactome.lit_ball_tagger.common.dialog.TitleEditDialog
 
 @Composable
-fun RootContent(modifier: Modifier = Modifier) {
+fun RootContent(
+    modifier: Modifier = Modifier,
+    onExit: () -> Unit,
+    ) {
     val model = remember { RootStore() }
     val state = model.state
     val scope = rememberCoroutineScope()
@@ -25,7 +28,8 @@ fun RootContent(modifier: Modifier = Modifier) {
         onItemClicked = model::onItemClicked,
         onItemDeleteClicked = model::onItemDeleteClicked,
         onItemRadioButtonClicked = model::onItemRadioButtonClicked,
-        onRailItemClicked = model.onRailItemClicked
+        onRailItemClicked = model.onRailItemClicked,
+        onExit,
     )
 
     scope.launch (Dispatchers.IO) {
