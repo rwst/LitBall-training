@@ -3,6 +3,7 @@ package org.reactome.lit_ball_tagger.common
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 
 internal class RootStore {
     var state: RootState by mutableStateOf(initialState())
@@ -27,6 +28,12 @@ internal class RootStore {
     private fun buttonSettings() {
     }
     private fun buttonExit() {
+    }
+    fun onTagsButtonClicked() {
+        setState { copy(editTags = true) }
+    }
+    fun onEditTagsDone() {
+        setState { copy(editTags = false) }
     }
     fun onItemClicked(id: Int) {
 //        setState { copy(editingItemId = id) }
@@ -67,7 +74,10 @@ internal class RootStore {
     fun onSaveDoneChanged() {
         setState { copy(doSave = false) }
     }
-    fun onItemsChanged() {
+    suspend fun onItemsChanged() {
+        // TODO: This is a hack.
+        setState { copy(items = emptyList()) }
+        delay(50)
         setState { copy(items = CurrentPaperList.toList()) }
     }
     fun onSettingsChanged(settings: Settings) {
@@ -91,6 +101,7 @@ internal class RootStore {
         val newList: Boolean = false,
         val doImport: Boolean = false,
         val doSave: Boolean = false,
+        val editTags: Boolean = false,
     )
 }
 

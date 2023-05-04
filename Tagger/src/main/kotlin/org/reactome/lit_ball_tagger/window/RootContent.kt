@@ -8,10 +8,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball_tagger.common.*
 import org.reactome.lit_ball_tagger.common.RootStore
-import org.reactome.lit_ball_tagger.common.dialog.SettingsDialog
+import org.reactome.lit_ball_tagger.common.dialog.*
 import org.reactome.lit_ball_tagger.common.dialog.ImportDialog
 import org.reactome.lit_ball_tagger.common.dialog.NewListDialog
-import org.reactome.lit_ball_tagger.common.dialog.TitleEditDialog
+import org.reactome.lit_ball_tagger.common.dialog.SettingsDialog
 
 @Composable
 fun RootContent(
@@ -30,6 +30,7 @@ fun RootContent(
         onItemRadioButtonClicked = model::onItemRadioButtonClicked,
         onRailItemClicked = model.onRailItemClicked,
         onExit,
+        onTagsButtonClicked = model::onTagsButtonClicked,
     )
 
     scope.launch (Dispatchers.IO) {
@@ -78,5 +79,17 @@ fun RootContent(
             (model::onSaveDoneChanged)()
             CurrentPaperList.save()
         }
+    }
+    if (state.editTags) {
+        EditTagsDialog(
+            onResult = {
+                scope.launch (Dispatchers.IO) {
+                    println(CurrentPaperList.toList().hashCode())
+                    CurrentPaperList.setAllTags(it)
+                    println(CurrentPaperList.toList().hashCode())
+                    (model::onItemsChanged)()
+                } },
+            onDoneChanged = model::onEditTagsDone,
+        )
     }
 }

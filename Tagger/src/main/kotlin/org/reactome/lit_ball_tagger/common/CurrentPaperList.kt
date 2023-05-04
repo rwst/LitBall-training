@@ -147,4 +147,8 @@ object CurrentPaperList {
             return@updateItem it
         }
     }
+    fun setAllTags(tag: Tag) {
+        for (paper in list)
+            paper.tag = tag
+    }
 }

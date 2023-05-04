@@ -40,6 +40,7 @@ internal fun MainContent(
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     onRailItemClicked: List<() -> Unit>,
     onExit: () -> Unit,
+    onTagsButtonClicked: () -> Unit,
 ) {
     Row(modifier) {
         Rail(
@@ -52,6 +53,7 @@ internal fun MainContent(
             onItemClicked = onItemClicked,
             onItemDeleteClicked = onItemDeleteClicked,
             onItemRadioButtonClicked = onItemRadioButtonClicked,
+            onTagsButtonClicked = onTagsButtonClicked,
         )
     }
 }
@@ -63,6 +65,7 @@ fun ListContent(
     onItemClicked: (id: Int) -> Unit,
     onItemDeleteClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
+    onTagsButtonClicked: () -> Unit,
     ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
@@ -107,11 +110,21 @@ fun ListContent(
             .onPreviewKeyEvent(onKeyDown)
     ) {
         Column {
-            TextButton(
-                onClick = {},
-                modifier = Modifier.padding(0.dp)
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(CurrentPaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + items.size.toString())
+                TextButton(
+                    onClick = {},
+                    modifier = Modifier.padding(0.dp)
+                ) {
+                    Text(CurrentPaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + items.size.toString())
+                }
+                Button(
+                    onClick = onTagsButtonClicked,
+                    ) {
+                    Text("Set all tags")
+                }
             }
             LazyColumn(
                 Modifier.fillMaxSize().padding(end = 12.dp),
