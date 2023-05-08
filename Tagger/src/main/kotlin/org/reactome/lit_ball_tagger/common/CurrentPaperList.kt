@@ -54,31 +54,47 @@ object CurrentPaperList {
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     fun new(files: List<File>): CurrentPaperList {
-        for (file in files) {
-            val p: String
-            if (file.isDirectory) {
-                Settings.map["list-path"] = file.absolutePath
-                fileName = "/Untitled"
-                p = file.absolutePath + fileName
-            } else {
-                Settings.map["list-path"] = file.absolutePath.substringBeforeLast('/')
-                p = file.absolutePath
-                fileName = file.name
-            }
-            path = p
-            Settings.save()
-            val f = File(p)
-            if (f.exists()) {
-                if (list.isEmpty())
-                    list = Json.decodeFromStream<MutableList<Paper>>(File(p).inputStream())
-                else
-                    list.addAll(Json.decodeFromStream<MutableList<Paper>>(File(p).inputStream()))
-            }
-            else
-                list = mutableListOf()
+        if (files.size > 1) throw Exception("multiple files selected in New")
+        val file = files[0]
+        val p: String
+        if (file.isDirectory) {
+            Settings.map["list-path"] = file.absolutePath
+            fileName = "/Untitled"
+            p = file.absolutePath + fileName
+        } else {
+            Settings.map["list-path"] = file.absolutePath.substringBeforeLast('/')
+            p = file.absolutePath
+            fileName = file.name
         }
+        path = p
+        Settings.save()
+        val f = File(p)
+        if (f.exists()) f.delete()
+        list = mutableListOf()
+        updateShadowMap()
+        return this
+    }
+    @OptIn(ExperimentalSerializationApi::class)
+    fun open(files: List<File>): CurrentPaperList {
+        Settings.map["list-path"] = files[0].absolutePath.substringBeforeLast('/')
+        Settings.save()
+        for (file in files) {
+            if (file.isDirectory) throw Exception("cannot open directory: ${file.name}")
+            path = file.absolutePath
+            path?.let {
+                val f = File(it)
+                if (f.exists()) {
+                    if (list.isEmpty())
+                        list = Json.decodeFromStream<MutableList<Paper>>(f.inputStream())
+                    else
+                        list.addAll(Json.decodeFromStream<MutableList<Paper>>(f.inputStream()))
+                } else
+                    throw Exception("File to open: $fileName does not exist")
+            }
+        }
+        if (files.size > 1) path = (path?.substringBeforeLast('/') ?: "") + "/Untitled"
+
         list.sortBy { it.details.title }
         updateShadowMap()
         return this

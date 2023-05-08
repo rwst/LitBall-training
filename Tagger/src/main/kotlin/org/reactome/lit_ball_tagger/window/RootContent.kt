@@ -63,6 +63,18 @@ fun RootContent(
             onDoneChanged = model::onNewFileDoneChanged,
         )
     }
+    if (state.openList) {
+        NewListDialog(
+            state.settings.map["list-path"],
+            onResult = {
+                scope.launch (Dispatchers.IO) {
+                    CurrentPaperList.open(it)
+                    (model::onItemsChanged)()
+                }
+            },
+            onDoneChanged = model::onOpenFileDoneChanged,
+        )
+    }
     if (state.doImport) {
         ImportDialog(
             state.settings.map["import-path"],

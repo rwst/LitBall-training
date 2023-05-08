@@ -27,41 +27,47 @@ fun Rail(
         NavigationRailItem(
             onClick = onRailItemClicked[1],
             icon = { Icon(Icons.Filled.FileOpen, null) },
-            label = { Text("Open/New") },
+            label = { Text("New") },
             selected = selectedItem == 1
         )
         NavigationRailItem(
             onClick = onRailItemClicked[2],
-            icon = { Icon(Icons.Filled.Download, null) },
-            label = { Text("Import") },
+            icon = { Icon(Icons.Filled.FileOpen, null) },
+            label = { Text("Open") },
             selected = selectedItem == 2
         )
         NavigationRailItem(
             onClick = onRailItemClicked[3],
-            icon = { Icon(Icons.Filled.Publish, null) },
-            label = { Text("Export") },
+            icon = { Icon(Icons.Filled.Download, null) },
+            label = { Text("Import") },
             selected = selectedItem == 3
         )
         NavigationRailItem(
             onClick = onRailItemClicked[4],
-            icon = { Icon(Icons.Filled.Save, null) },
-            label = { Text("Save") },
+            icon = { Icon(Icons.Filled.Publish, null) },
+            label = { Text("Export") },
             selected = selectedItem == 4
         )
         NavigationRailItem(
             onClick = onRailItemClicked[5],
-            icon = { Icon(Icons.Filled.Settings, null) },
-            label = { Text("Settings") },
+            icon = { Icon(Icons.Filled.Save, null) },
+            label = { Text("Save") },
             selected = selectedItem == 5
         )
         NavigationRailItem(
+            onClick = onRailItemClicked[6],
+            icon = { Icon(Icons.Filled.Settings, null) },
+            label = { Text("Settings") },
+            selected = selectedItem == 6
+        )
+        NavigationRailItem(
             onClick = {
-                onRailItemClicked[6]()
+                onRailItemClicked[7]()
                 onExit()
             },
             icon = { Icon(Icons.Filled.ExitToApp, null) },
             label = { Text("Exit") },
-            selected = selectedItem == 6
+            selected = selectedItem == 7
         )
     }
 }

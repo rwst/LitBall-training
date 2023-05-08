@@ -10,11 +10,14 @@ internal class RootStore {
         private set
 
     val onRailItemClicked: List<() -> Unit> = listOf(
-        ::buttonInfo, ::buttonNew, ::buttonImport, ::buttonExport, ::buttonSave, ::buttonSettings, ::buttonExit)
+        ::buttonInfo, ::buttonNew, ::buttonOpen, ::buttonImport, ::buttonExport, ::buttonSave, ::buttonSettings, ::buttonExit)
     private fun buttonInfo() {
     }
     private fun buttonNew() {
         setState { copy(newList = true) }
+    }
+    private fun buttonOpen() {
+        setState { copy(openList = true) }
     }
     private fun buttonImport() {
         setState { copy(doImport = true) }
@@ -68,6 +71,9 @@ internal class RootStore {
     fun onNewFileDoneChanged() {
         setState { copy(items = CurrentPaperList.toList(), newList = false) }
     }
+    fun onOpenFileDoneChanged() {
+        setState { copy(items = CurrentPaperList.toList(), openList = false) }
+    }
     fun onImportDoneChanged() {
         setState { copy(items = CurrentPaperList.toList(), doImport = false) }
     }
@@ -99,6 +105,7 @@ internal class RootStore {
         val editingItemId: Int? = null,
         val editingSettings: Boolean = false,
         val newList: Boolean = false,
+        val openList: Boolean = false,
         val doImport: Boolean = false,
         val doSave: Boolean = false,
         val editTags: Boolean = false,
