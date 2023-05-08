@@ -51,6 +51,9 @@ fun RootContent(
             state.settings,
             onCloseClicked = {})
     }
+    if (state.infoList) {
+        InfoDialog(model::onInfoDoneClicked)
+    }
     if (state.newList) {
         NewListDialog(
             state.settings.map["list-path"],

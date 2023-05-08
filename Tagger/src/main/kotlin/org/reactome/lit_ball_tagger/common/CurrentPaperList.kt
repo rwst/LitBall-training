@@ -164,4 +164,33 @@ object CurrentPaperList {
         for (paper in list)
             paper.tag = tag
     }
+
+    fun stats(): String {
+        if (list.isEmpty()) return ""
+        var nTLDR = 0
+        var nAbstract = 0
+        var nTA = 0
+        var nPubTypes = 0
+        list.forEach {
+            var tmp = 0
+            it.details.tldr?.get("text")?.let {
+                nTLDR += 1
+                tmp += 1
+            }
+            it.details.abstract?.let {
+                nAbstract += 1
+                tmp += 1
+            }
+            it.details.publicationTypes.let { nPubTypes += 1 }
+            if (tmp == 2) nTA += 1
+        }
+        return """
+            File: $path
+            Size: ${list.size}
+            #TLDR: ${nTLDR}/${list.size} (${1000*nTLDR/list.size/10}%)}
+            #Abstracts: ${nAbstract}/${list.size} (${1000*nAbstract/list.size/10}%)}
+            #both: ${nTA}/${list.size} (${1000*nTA/list.size/10}%)}
+            #PubType: ${nPubTypes}/${list.size} (${1000*nPubTypes/list.size/10}%)}
+        """.trimIndent()
+    }
 }

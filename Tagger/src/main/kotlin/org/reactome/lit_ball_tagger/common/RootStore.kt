@@ -12,6 +12,7 @@ internal class RootStore {
     val onRailItemClicked: List<() -> Unit> = listOf(
         ::buttonInfo, ::buttonNew, ::buttonOpen, ::buttonImport, ::buttonExport, ::buttonSave, ::buttonSettings, ::buttonExit)
     private fun buttonInfo() {
+        setState { copy(infoList = true) }
     }
     private fun buttonNew() {
         setState { copy(newList = true) }
@@ -48,6 +49,10 @@ internal class RootStore {
 
     fun onItemRadioButtonClicked(id: Int, btn: Int) {
         CurrentPaperList.setTag(id, btn)
+    }
+
+    fun onInfoDoneClicked() {
+        setState { copy(infoList = false) }
     }
 
     fun onEditorCloseClicked() {
@@ -104,6 +109,7 @@ internal class RootStore {
         val activeRailItem: String = "",
         val editingItemId: Int? = null,
         val editingSettings: Boolean = false,
+        val infoList: Boolean = false,
         val newList: Boolean = false,
         val openList: Boolean = false,
         val doImport: Boolean = false,
