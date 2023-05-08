@@ -28,29 +28,26 @@ object CurrentPaperList {
         return this
     }
     @Suppress("SENSELESS_COMPARISON")
+    private fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String, String>) -> Unit) {
+        val extIds = map?.toMutableMap()
+        extIds?.entries?.forEach {
+            if (it.value == null) {
+                extIds.remove(it.key)
+                onChanged(extIds)
+            }
+        }
+    }
     private fun sanitize() {
         list.forEachIndexed { index, paper ->
             val newPaper: Paper = paper
             var isChanged = false
-            val extIds = paper.details.externalIds?.toMutableMap()
-            if (extIds != null) {
-                for (entry in extIds.entries) {
-                    if (entry.value == null) {
-                        extIds.remove(entry.key)
-                        newPaper.details.externalIds = extIds
-                        isChanged = true
-                    }
-                }
+            sanitizeMap(paper.details.externalIds) {
+                newPaper.details.externalIds = it
+                isChanged = true
             }
-            val tldr = paper.details.tldr?.toMutableMap()
-            if (tldr != null) {
-                for (entry in tldr.entries) {
-                    if (entry.value == null) {
-                        tldr.remove(entry.key)
-                        newPaper.details.tldr = tldr
-                        isChanged = true
-                    }
-                }
+            sanitizeMap(paper.details.tldr) {
+                newPaper.details.tldr = it
+                isChanged = true
             }
             if (isChanged)
                 list[index] = newPaper
