@@ -130,7 +130,10 @@ fun ListContent(
                 Modifier.fillMaxSize().padding(end = 12.dp),
                 lazyListState
             ) {
-                items(items) { item ->
+                items(
+                    key = { it.id },
+                    items = items,
+                    ) { item ->
                     CardWithTextIconAndRadiobutton(
                         item = item,
                         onClicked = { onItemClicked(item.id) },
