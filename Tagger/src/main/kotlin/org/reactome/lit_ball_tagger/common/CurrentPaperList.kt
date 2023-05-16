@@ -93,7 +93,14 @@ object CurrentPaperList {
                     throw Exception("File to open: $fileName does not exist")
             }
         }
-        if (files.size > 1) path = (path?.substringBeforeLast('/') ?: "") + "/Untitled"
+        if (files.size > 1) {
+            path = (path?.substringBeforeLast('/') ?: "") + "/Untitled"
+            fileName = "/Untitled"
+        }
+        else if (files.size == 1) {
+            path = files[0].absolutePath
+            fileName = files[0].name
+        }
 
         list.sortBy { it.details.title }
         updateShadowMap()
