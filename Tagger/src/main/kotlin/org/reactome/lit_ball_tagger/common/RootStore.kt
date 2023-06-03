@@ -40,7 +40,7 @@ internal class RootStore {
         setState { copy(editTags = false) }
     }
     fun onItemClicked(id: Int) {
-//        setState { copy(editingItemId = id) }
+        setState { copy(editingItemId = id) }
     }
 
     fun onItemDeleteClicked(id: Int) {

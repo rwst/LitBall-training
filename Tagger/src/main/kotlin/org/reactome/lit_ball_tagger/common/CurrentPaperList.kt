@@ -200,4 +200,14 @@ object CurrentPaperList {
             #PubType: ${nPubTypes}/${list.size} (${1000*nPubTypes/list.size/10}%)}
         """.trimIndent()
     }
+    fun pretty(id: Int) : String {
+        val index = shadowMap[id] ?: return "CAN'T HAPPEN: not in shadowMap"
+        val p = list[index]
+        return """
+            T: ${p.details.title}
+            A: ${p.details.abstract}
+            TLDR: ${p.details.tldr?.get("text")}
+            DOI: ${p.details.externalIds?.get("DOI")}  TYPES: ${p.details.publicationTypes?.joinToString(" ")}
+        """.trimIndent()
+    }
 }

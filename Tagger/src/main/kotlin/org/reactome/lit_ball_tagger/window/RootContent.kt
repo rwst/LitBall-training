@@ -38,12 +38,9 @@ fun RootContent(
     }
 
     state.editingItemId?.also { item ->
-        TitleEditDialog(
-            item = state.items[item],
-            onCloseClicked = model::onEditorCloseClicked,
-            onTextChanged = model::onEditorTextChanged,
-            onDoneChanged = model::onEditorDoneChanged,
-        )
+        ItemClickedDialog(
+            item,
+            model::onEditorCloseClicked)
     }
 
     if (state.editingSettings) {

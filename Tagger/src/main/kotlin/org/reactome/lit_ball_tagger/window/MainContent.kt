@@ -186,7 +186,9 @@ fun CardWithTextIconAndRadiobutton(
                 text = cardTitle ?: "",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1F).align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .weight(1F).align(Alignment.CenterVertically)
+                    .clickable { onClicked() },
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
