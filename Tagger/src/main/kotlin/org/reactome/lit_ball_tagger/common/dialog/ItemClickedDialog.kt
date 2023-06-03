@@ -18,6 +18,7 @@ import org.reactome.lit_ball_tagger.common.CurrentPaperList
 @OptIn(ExperimentalMaterialApi::class)
 @Suppress("FunctionName")
 @Composable
+// TODO: Fix Scrolling
 internal fun ItemClickedDialog(id: Int, onDoneClicked: () -> Unit) {
     val lazyListState = rememberLazyListState()
     AlertDialog(
