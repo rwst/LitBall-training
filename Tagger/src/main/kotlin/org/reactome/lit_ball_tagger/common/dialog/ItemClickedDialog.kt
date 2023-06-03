@@ -20,7 +20,6 @@ import org.reactome.lit_ball_tagger.common.CurrentPaperList
 @Composable
 internal fun ItemClickedDialog(id: Int, onDoneClicked: () -> Unit) {
     val lazyListState = rememberLazyListState()
-    // TODO: Fix Scrolling
     AlertDialog(
         modifier = Modifier
             .fillMaxSize(fraction = 0.8f)
