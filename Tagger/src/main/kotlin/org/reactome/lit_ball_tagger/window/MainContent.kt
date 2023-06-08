@@ -121,6 +121,7 @@ fun ListContent(
                     Text(CurrentPaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + items.size.toString())
                 }
                 Button(
+                    modifier = Modifier.padding(horizontal = 24.dp),
                     onClick = onTagsButtonClicked,
                     ) {
                     Text("Set all tags")
