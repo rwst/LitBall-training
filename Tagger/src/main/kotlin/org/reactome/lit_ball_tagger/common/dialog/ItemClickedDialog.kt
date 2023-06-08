@@ -32,8 +32,7 @@ internal fun ItemClickedDialog(id: Int, onDoneClicked: () -> Unit) {
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                Row (
-                ) {
+                Row {
                     LazyColumn(
                         Modifier.fillMaxSize().padding(end = 12.dp).size(100.dp),
                         lazyListState

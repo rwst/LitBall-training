@@ -161,15 +161,13 @@ object CurrentPaperList {
     }
     fun setTag(id: Int, btn: Int) {
         val newTag = Tag.values()[btn]
-        updateItem(id
-        ) {
+        updateItem(id) {
             it.tag = newTag
             return@updateItem it
         }
     }
     fun setAllTags(tag: Tag) {
-        for (paper in list)
-            paper.tag = tag
+        list.forEach { it.tag = tag }
     }
 
     fun stats(): String {

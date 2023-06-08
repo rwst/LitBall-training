@@ -18,9 +18,9 @@ internal fun InfoDialog(onDoneClicked: () -> Unit) {
             Text(text = "File stats")
         },
         text = {
-                Text(
-                    text = CurrentPaperList.stats(),
-                    maxLines = 10)
+            Text(
+                text = CurrentPaperList.stats(),
+                maxLines = 10)
         },
         onDismissRequest = {},
         confirmButton = {
