@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
@@ -38,12 +39,14 @@ internal fun ItemClickedDialog(id: Int, onDoneClicked: () -> Unit) {
                         lazyListState
                     ) {
                         item {
-                            Text(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth(),
-                                text = CurrentPaperList.pretty(id),
-                            )
+                            SelectionContainer {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth(),
+                                    text = CurrentPaperList.pretty(id),
+                                )
+                            }
                         }
                     }
                 }
