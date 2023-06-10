@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.reactome.lit_ball_tagger.common.CurrentPaperList
 
@@ -20,7 +20,8 @@ internal fun InfoDialog(onDoneClicked: () -> Unit) {
         text = {
             Text(
                 text = CurrentPaperList.stats(),
-                maxLines = 10)
+                maxLines = 10
+            )
         },
         onDismissRequest = {},
         confirmButton = {

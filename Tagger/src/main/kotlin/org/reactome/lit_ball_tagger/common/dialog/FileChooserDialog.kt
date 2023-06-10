@@ -14,7 +14,7 @@ fun FileChooserDialog(
     onDoneChanged: () -> Unit,
 ) {
     val fileChooser = JFileChooser(FileSystemView.getFileSystemView())
-    fileChooser.currentDirectory = File(path?:System.getProperty("user.dir"))
+    fileChooser.currentDirectory = File(path ?: System.getProperty("user.dir"))
     fileChooser.dialogTitle = title
     fileChooser.fileSelectionMode = JFileChooser.FILES_AND_DIRECTORIES
     fileChooser.isAcceptAllFileFilterUsed = true

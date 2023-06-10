@@ -13,20 +13,26 @@ object CurrentPaperList {
     private var path: String? = null
     var fileName: String = ""
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
-    fun toList(): List<Paper> { return list.toList() }
+    fun toList(): List<Paper> {
+        return list.toList()
+    }
+
     fun toListWithItemRemoved(id: Int): List<Paper> {
         list = list.filterNot { it.id == id }.toMutableList()
         updateShadowMap()
         return list.toList()
     }
+
     private fun updateShadowMap() {
         list.forEachIndexed { index, paper -> shadowMap[paper.id] = index }
     }
-    private fun updateItem(id: Int, transformer: (Paper) -> Paper) : CurrentPaperList {
+
+    private fun updateItem(id: Int, transformer: (Paper) -> Paper): CurrentPaperList {
         val index = shadowMap[id] ?: return this
         list[index] = transformer(list[index])
         return this
     }
+
     @Suppress("SENSELESS_COMPARISON")
     private fun sanitizeMap(map: Map<String, String>?, onChanged: (MutableMap<String, String>) -> Unit) {
         val extIds = map?.toMutableMap()
@@ -37,6 +43,7 @@ object CurrentPaperList {
             }
         }
     }
+
     private fun sanitize() {
         list.forEachIndexed { index, paper ->
             val newPaper: Paper = paper
@@ -75,6 +82,7 @@ object CurrentPaperList {
         updateShadowMap()
         return this
     }
+
     @OptIn(ExperimentalSerializationApi::class)
     fun open(files: List<File>): CurrentPaperList {
         Settings.map["list-path"] = files[0].absolutePath.substringBeforeLast('/')
@@ -96,8 +104,7 @@ object CurrentPaperList {
         if (files.size > 1) {
             path = (path?.substringBeforeLast('/') ?: "") + "/Untitled"
             fileName = "/Untitled"
-        }
-        else if (files.size == 1) {
+        } else if (files.size == 1) {
             path = files[0].absolutePath
             fileName = files[0].name
         }
@@ -106,12 +113,14 @@ object CurrentPaperList {
         updateShadowMap()
         return this
     }
+
     fun save() {
         if (path == null) return
         val pathStr: String = path as String
         val text = Json.encodeToString(list)
         File(pathStr).writeText(text)
     }
+
     fun export() {
         if (path == null) return
         val pathStr: String = path as String
@@ -121,6 +130,7 @@ object CurrentPaperList {
             File(pathStr + '-' + tag.name).writeText(text)
         }
     }
+
     suspend fun import(files: List<File>): CurrentPaperList {
         for (file in files) {
             if (file.isDirectory) {
@@ -134,17 +144,19 @@ object CurrentPaperList {
             val lines = file
                 .readLines()
                 .filter { it.isNotBlank() }
-                .map { it.uppercase(Locale.ENGLISH)
-                    .removeSuffix("^M")
-                    .trimEnd() }
+                .map {
+                    it.uppercase(Locale.ENGLISH)
+                        .removeSuffix("^M")
+                        .trimEnd()
+                }
                 .toSet()
                 .toList()
             val doisRequested = lines.toMutableSet()
             val chunkSize = 450
-            for (n in 1..(lines.size + chunkSize - 1)/chunkSize) {
+            for (n in 1..(lines.size + chunkSize - 1) / chunkSize) {
                 val maxId: Int = list.maxOfOrNull { it.id } ?: 0
                 val upper = min(n * chunkSize - 1, lines.size - 1)
-                val lower = (n-1) * chunkSize
+                val lower = (n - 1) * chunkSize
                 S2client.getDataFor(lines.subList(lower, upper + 1))?.mapIndexed { index, paperDetails ->
                     if (paperDetails != null) {
                         list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
@@ -159,6 +171,7 @@ object CurrentPaperList {
         updateShadowMap()
         return this
     }
+
     fun setTag(id: Int, btn: Int) {
         val newTag = Tag.values()[btn]
         updateItem(id) {
@@ -166,6 +179,7 @@ object CurrentPaperList {
             return@updateItem it
         }
     }
+
     fun setAllTags(tag: Tag) {
         list.forEach { it.tag = tag }
     }
@@ -192,13 +206,14 @@ object CurrentPaperList {
         return """
             File: $path
             Size: ${list.size}
-            #TLDR: ${nTLDR}/${list.size} (${1000*nTLDR/list.size/10}%)}
-            #Abstracts: ${nAbstract}/${list.size} (${1000*nAbstract/list.size/10}%)}
-            #both: ${nTA}/${list.size} (${1000*nTA/list.size/10}%)}
-            #PubType: ${nPubTypes}/${list.size} (${1000*nPubTypes/list.size/10}%)}
+            #TLDR: ${nTLDR}/${list.size} (${1000 * nTLDR / list.size / 10}%)}
+            #Abstracts: ${nAbstract}/${list.size} (${1000 * nAbstract / list.size / 10}%)}
+            #both: ${nTA}/${list.size} (${1000 * nTA / list.size / 10}%)}
+            #PubType: ${nPubTypes}/${list.size} (${1000 * nPubTypes / list.size / 10}%)}
         """.trimIndent()
     }
-    fun pretty(id: Int) : String {
+
+    fun pretty(id: Int): String {
         val index = shadowMap[id] ?: return "CAN'T HAPPEN: not in shadowMap"
         val p = list[index]
         return """

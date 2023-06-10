@@ -9,8 +9,7 @@ internal fun ImportDialog(
     startPath: String?,
     onResult: (file: List<File>) -> Unit,
     onDoneChanged: () -> Unit,
-)
-{
+) {
     FileChooserDialog(
         "Choose a file",
         startPath,

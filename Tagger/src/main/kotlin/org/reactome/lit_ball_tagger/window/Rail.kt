@@ -2,10 +2,16 @@
 
 package org.reactome.lit_ball_tagger.window
 
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.NavigationRail
+import androidx.compose.material.NavigationRailItem
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 
 @Composable
 fun Rail(

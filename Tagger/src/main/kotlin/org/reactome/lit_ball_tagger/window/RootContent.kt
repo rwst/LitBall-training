@@ -2,22 +2,22 @@
 
 package org.reactome.lit_ball_tagger.window
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.reactome.lit_ball_tagger.common.*
+import org.reactome.lit_ball_tagger.common.CurrentPaperList
 import org.reactome.lit_ball_tagger.common.RootStore
+import org.reactome.lit_ball_tagger.common.Settings
 import org.reactome.lit_ball_tagger.common.dialog.*
-import org.reactome.lit_ball_tagger.common.dialog.ImportDialog
-import org.reactome.lit_ball_tagger.common.dialog.NewListDialog
-import org.reactome.lit_ball_tagger.common.dialog.SettingsDialog
 
 @Composable
 fun RootContent(
     modifier: Modifier = Modifier,
     onExit: () -> Unit,
-    ) {
+) {
     val model = remember { RootStore() }
     val state = model.state
     val scope = rememberCoroutineScope()
@@ -33,14 +33,15 @@ fun RootContent(
         onTagsButtonClicked = model::onTagsButtonClicked,
     )
 
-    scope.launch (Dispatchers.IO) {
+    scope.launch(Dispatchers.IO) {
         Settings.load()
     }
 
     state.editingItemId?.also { item ->
         ItemClickedDialog(
             item,
-            model::onEditorCloseClicked)
+            model::onEditorCloseClicked
+        )
     }
 
     if (state.editingSettings) {
@@ -55,7 +56,7 @@ fun RootContent(
         NewListDialog(
             state.settings.map["list-path"],
             onResult = {
-                scope.launch (Dispatchers.IO) {
+                scope.launch(Dispatchers.IO) {
                     CurrentPaperList.new(it)
                     (model::onItemsChanged)()
                 }
@@ -67,7 +68,7 @@ fun RootContent(
         NewListDialog(
             state.settings.map["list-path"],
             onResult = {
-                scope.launch (Dispatchers.IO) {
+                scope.launch(Dispatchers.IO) {
                     CurrentPaperList.open(it)
                     (model::onItemsChanged)()
                 }
@@ -79,15 +80,16 @@ fun RootContent(
         ImportDialog(
             state.settings.map["import-path"],
             onResult = {
-                scope.launch (Dispatchers.IO) {
+                scope.launch(Dispatchers.IO) {
                     CurrentPaperList.import(it)
                     (model::onItemsChanged)()
-                } },
+                }
+            },
             onDoneChanged = model::onImportDoneChanged,
         )
     }
     if (state.doSave) {
-        scope.launch (Dispatchers.IO) {
+        scope.launch(Dispatchers.IO) {
             (model::onSaveDoneChanged)()
             CurrentPaperList.save()
         }
@@ -95,12 +97,13 @@ fun RootContent(
     if (state.editTags) {
         EditTagsDialog(
             onResult = {
-                scope.launch (Dispatchers.IO) {
+                scope.launch(Dispatchers.IO) {
                     println(CurrentPaperList.toList().hashCode())
                     CurrentPaperList.setAllTags(it)
                     println(CurrentPaperList.toList().hashCode())
                     (model::onItemsChanged)()
-                } },
+                }
+            },
             onDoneChanged = model::onEditTagsDone,
         )
     }

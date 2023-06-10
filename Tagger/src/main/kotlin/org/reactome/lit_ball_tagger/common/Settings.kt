@@ -20,22 +20,26 @@ object Settings {
         if (db.isReadable()) {
             try {
                 text = File(path).readText()
+            } catch (e: IOException) {
+                Logger.error(e)
             }
-            catch (e: IOException) { Logger.error(e) }
         }
         map = try {
-            kotlinx.serialization.json.Json.decodeFromString<MutableMap<String,String>>(text)
+            kotlinx.serialization.json.Json.decodeFromString<MutableMap<String, String>>(text)
         } catch (e: Exception) {
             mutableMapOf()
         }
     }
+
     fun save() {
         try {
             val text = Json.encodeToString(map)
             File(path).writeText(text)
+        } catch (e: IOException) {
+            Logger.error(e)
         }
-        catch (e: IOException) { Logger.error(e) }
     }
+
     override fun toString(): String {
         return "Settings()=$map"
     }

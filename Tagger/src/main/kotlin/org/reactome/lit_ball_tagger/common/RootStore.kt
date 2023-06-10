@@ -10,35 +10,54 @@ internal class RootStore {
         private set
 
     val onRailItemClicked: List<() -> Unit> = listOf(
-        ::buttonInfo, ::buttonNew, ::buttonOpen, ::buttonImport, ::buttonExport, ::buttonSave, ::buttonSettings, ::buttonExit)
+        ::buttonInfo,
+        ::buttonNew,
+        ::buttonOpen,
+        ::buttonImport,
+        ::buttonExport,
+        ::buttonSave,
+        ::buttonSettings,
+        ::buttonExit
+    )
+
     private fun buttonInfo() {
         setState { copy(infoList = true) }
     }
+
     private fun buttonNew() {
         setState { copy(newList = true) }
     }
+
     private fun buttonOpen() {
         setState { copy(openList = true) }
     }
+
     private fun buttonImport() {
         setState { copy(doImport = true) }
     }
+
     private fun buttonExport() {
         CurrentPaperList.export()
     }
+
     private fun buttonSave() {
         setState { copy(doSave = true) }
     }
+
     private fun buttonSettings() {
     }
+
     private fun buttonExit() {
     }
+
     fun onTagsButtonClicked() {
         setState { copy(editTags = true) }
     }
+
     fun onEditTagsDone() {
         setState { copy(editTags = false) }
     }
+
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
     }
@@ -76,21 +95,26 @@ internal class RootStore {
     fun onNewFileDoneChanged() {
         setState { copy(items = CurrentPaperList.toList(), newList = false) }
     }
+
     fun onOpenFileDoneChanged() {
         setState { copy(items = CurrentPaperList.toList(), openList = false) }
     }
+
     fun onImportDoneChanged() {
         setState { copy(items = CurrentPaperList.toList(), doImport = false) }
     }
+
     fun onSaveDoneChanged() {
         setState { copy(doSave = false) }
     }
+
     suspend fun onItemsChanged() {
         // TODO: This is a hack.
         setState { copy(items = emptyList()) }
         delay(50)
         setState { copy(items = CurrentPaperList.toList()) }
     }
+
     fun onSettingsChanged(settings: Settings) {
         setState { copy(settings = settings) }
     }

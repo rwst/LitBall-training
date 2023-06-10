@@ -2,24 +2,23 @@
 
 package org.reactome.lit_ball_tagger.window
 
-import androidx.compose.foundation.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.*
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -66,7 +65,7 @@ fun ListContent(
     onItemDeleteClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     onTagsButtonClicked: () -> Unit,
-    ) {
+) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
 
@@ -75,6 +74,7 @@ fun ListContent(
             KeyEventType.KeyUp -> {
                 false
             }
+
             else -> {
                 val topItem = lazyListState.firstVisibleItemIndex
                 val topOffset = lazyListState.firstVisibleItemScrollOffset
@@ -90,10 +90,12 @@ fun ListContent(
                             lazyListState.scrollToItem(topItem - 1)
                         true
                     }
+
                     Key.DirectionDown -> {
                         lazyListState.scrollToItem(topItem + 1)
                         true
                     }
+
                     else -> false
                 }
             }
@@ -110,7 +112,7 @@ fun ListContent(
             .onPreviewKeyEvent(onKeyDown)
     ) {
         Column {
-            Row (
+            Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -123,7 +125,7 @@ fun ListContent(
                 Button(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     onClick = onTagsButtonClicked,
-                    ) {
+                ) {
                     Text("Set all tags")
                 }
             }
@@ -134,7 +136,7 @@ fun ListContent(
                 items(
                     key = { it.id },
                     items = items,
-                    ) { item ->
+                ) { item ->
                     CardWithTextIconAndRadiobutton(
                         item = item,
                         onClicked = { onItemClicked(item.id) },

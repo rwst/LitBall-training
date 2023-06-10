@@ -33,7 +33,7 @@ object S2Service {
 
     // Max supported fields: "paperId, externalIds, title, abstract, publicationTypes, tldr"
     @Serializable
-    data class PaperDetails (
+    data class PaperDetails(
         val paperId: String? = "",
         var externalIds: Map<String, String>? = emptyMap(),
         val title: String? = "",
@@ -68,6 +68,7 @@ object S2Service {
         Logger.i(TAG, "error code: ${result.code()}, msg: ${result.message()}")
         return null
     }
+
     @JvmSuppressWildcards
     suspend fun getBulkPaperDetails(ids: List<String>, fields: String): List<PaperDetails?>? {
         val bulkPaperApi = RetrofitHelper.getInstance().create(BulkPaperApi::class.java)
