@@ -13,7 +13,7 @@ enum class Tag {
 }
 
 @Serializable
-class Paper(val id: Int, val details: S2Service.PaperDetails, var tag: Tag) {
+class Paper(var id: Int, val details: S2Service.PaperDetails, var tag: Tag) {
 
     override fun toString(): String {
         return "Paper(details=$details, tag=$tag)"

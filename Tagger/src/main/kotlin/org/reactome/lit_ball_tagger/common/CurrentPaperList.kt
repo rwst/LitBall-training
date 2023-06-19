@@ -24,7 +24,10 @@ object CurrentPaperList {
     }
 
     private fun updateShadowMap() {
-        list.forEachIndexed { index, paper -> shadowMap[paper.id] = index }
+        shadowMap.clear()
+        list.forEachIndexed { index, paper ->
+            shadowMap[paper.id] = index
+        }
     }
 
     private fun updateItem(id: Int, transformer: (Paper) -> Paper): CurrentPaperList {
@@ -110,6 +113,7 @@ object CurrentPaperList {
         }
 
         list.sortBy { it.details.title }
+        list.forEachIndexed { index, paper -> paper.id = index }
         updateShadowMap()
         return this
     }
