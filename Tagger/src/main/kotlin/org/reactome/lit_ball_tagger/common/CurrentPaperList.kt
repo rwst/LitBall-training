@@ -127,12 +127,46 @@ object CurrentPaperList {
 
     fun export() {
         if (path == null) return
-        val pathStr: String = path as String
-        for (tag in Tag.values()) {
-            val tagged = list.filter { it.tag == tag }
-            val text = Json.encodeToString(tagged)
-            File(pathStr + '-' + tag.name).writeText(text)
+        val map: MutableMap<String,Paper> = mutableMapOf()
+        list.forEach {
+            val doi = it.details.externalIds?.get("DOI") ?: return@forEach
+            val alreadyFound = map[doi]
+            if (alreadyFound == null) {
+                map[doi] = it
+            }
+            else {
+                if (alreadyFound.tag != it.tag) {
+                    println("$doi: ${it.details.title}")
+                }
+            }
         }
+        val pathStr: String = path as String
+        NLP.init()
+        File("$pathStr-exported").writeText("[\n")
+        map.forEach {
+            var s: String = NLP.preprocess(it.value.details.title)
+            val types = it.value.details.publicationTypes
+            if (types != null && types.contains("Review"))
+                s += " Review "
+            val tldr = it.value.details.tldr
+            if (tldr != null)
+                s += NLP.preprocess(tldr["text"])
+
+            fun binarize(tag: Tag): String {
+                return when(tag) {
+                    Tag.Exp -> "1"
+                    Tag.Drug, Tag.Other -> "0"
+                }
+            }
+            val outString = Json.encodeToString(mapOf(
+                "DOI" to it.key,
+                "originalTitle" to it.value.details.title,
+                "preprocessedText" to s,
+                "label" to binarize(it.value.tag),
+                )) + ",\n"
+            File("$pathStr-exported").appendText(outString)
+        }
+        File("$pathStr-exported").appendText("]")
     }
 
     suspend fun import(files: List<File>): CurrentPaperList {
