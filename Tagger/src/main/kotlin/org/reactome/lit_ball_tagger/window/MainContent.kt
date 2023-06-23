@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.runBlocking
 import org.reactome.lit_ball_tagger.common.CurrentPaperList
+import org.reactome.lit_ball_tagger.common.EnrichedItems
 import org.reactome.lit_ball_tagger.common.Paper
 import org.reactome.lit_ball_tagger.common.Tag
 
@@ -40,6 +41,7 @@ internal fun MainContent(
     onRailItemClicked: List<() -> Unit>,
     onExit: () -> Unit,
     onTagsButtonClicked: () -> Unit,
+    onEnrichButtonClicked: () -> Unit,
 ) {
     Row(modifier) {
         Rail(
@@ -53,6 +55,7 @@ internal fun MainContent(
             onItemDeleteClicked = onItemDeleteClicked,
             onItemRadioButtonClicked = onItemRadioButtonClicked,
             onTagsButtonClicked = onTagsButtonClicked,
+            onEnrichButtonClicked = onEnrichButtonClicked,
         )
     }
 }
@@ -65,6 +68,7 @@ fun ListContent(
     onItemDeleteClicked: (id: Int) -> Unit,
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     onTagsButtonClicked: () -> Unit,
+    onEnrichButtonClicked: () -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
@@ -122,6 +126,13 @@ fun ListContent(
                 ) {
                     Text(CurrentPaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + items.size.toString())
                 }
+                Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
+                Button(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    onClick = onEnrichButtonClicked,
+                ) {
+                    Text("Enrich Items")
+                }
                 Button(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     onClick = onTagsButtonClicked,
@@ -164,10 +175,11 @@ fun CardWithTextIconAndRadiobutton(
     onOptionSelected: (btn: Int) -> Unit,
 ) {
     val cardTitle = item.details.title
+    val enrichVal = EnrichedItems.enrich(item.details.externalIds?.get("DOI"))
     val radioButtonOptions = Tag.values().map { it.name }
     Card(
         elevation = 4.dp,
-        backgroundColor = Color.White,
+        backgroundColor = if (enrichVal != null) Color.LightGray else Color.White,
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
@@ -176,13 +188,22 @@ fun CardWithTextIconAndRadiobutton(
             modifier = Modifier.padding(0.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onDeleteClicked) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Item",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(24.dp)
-                )
+            Column {
+                if (enrichVal != null) {
+                    Text(
+                        text = enrichVal.toString(),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+                IconButton(onClick = onDeleteClicked) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete Item",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
             Spacer(modifier = Modifier.width(8.dp))
             Text(

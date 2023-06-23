@@ -54,6 +54,12 @@ internal class RootStore {
         setState { copy(editTags = true) }
     }
 
+    fun onEnrichButtonClicked() {
+        setState { copy(enrichItems = true) }
+    }
+    fun onEnrichDone() {
+        setState { copy(enrichItems = false) }
+    }
     fun onEditTagsDone() {
         setState { copy(editTags = false) }
     }
@@ -139,6 +145,7 @@ internal class RootStore {
         val doImport: Boolean = false,
         val doSave: Boolean = false,
         val editTags: Boolean = false,
+        val enrichItems: Boolean = false,
     )
 }
 

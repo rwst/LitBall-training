@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.reactome.lit_ball_tagger.common.CurrentPaperList
+import org.reactome.lit_ball_tagger.common.EnrichedItems
 import org.reactome.lit_ball_tagger.common.RootStore
 import org.reactome.lit_ball_tagger.common.Settings
 import org.reactome.lit_ball_tagger.common.dialog.*
@@ -31,6 +32,7 @@ fun RootContent(
         onRailItemClicked = model.onRailItemClicked,
         onExit,
         onTagsButtonClicked = model::onTagsButtonClicked,
+        onEnrichButtonClicked = model::onEnrichButtonClicked,
     )
 
     scope.launch(Dispatchers.IO) {
@@ -106,5 +108,13 @@ fun RootContent(
             },
             onDoneChanged = model::onEditTagsDone,
         )
+    }
+    if (state.enrichItems) {
+        scope.launch(Dispatchers.IO) {
+            if (!EnrichedItems.initialized)
+                EnrichedItems.init()
+            (model::onItemsChanged)()
+            (model::onEnrichDone)()
+        }
     }
 }
