@@ -126,48 +126,45 @@ object CurrentPaperList {
     }
 
     fun export() {
-        if (path == null) return
-        val map: MutableMap<String,Paper> = mutableMapOf()
+        path ?: return
+        val distinctPapers: MutableMap<String, Paper> = mutableMapOf()
+
         list.forEach {
             val doi = it.details.externalIds?.get("DOI") ?: return@forEach
-            val alreadyFound = map[doi]
+            val alreadyFound = distinctPapers[doi]
             if (alreadyFound == null) {
-                map[doi] = it
-            }
-            else {
+                distinctPapers[doi] = it
+            } else {
                 if (alreadyFound.tag != it.tag) {
                     println("$doi: ${it.details.title}")
                 }
             }
         }
-        val pathStr: String = path as String
         NLP.init()
-        File("$pathStr-exported").writeText("[\n")
-        map.forEach {
-            var s: String = NLP.preprocess(it.value.details.title)
-            val types = it.value.details.publicationTypes
-            if (types != null && types.contains("Review"))
-                s += " Review "
-            val tldr = it.value.details.tldr
-            if (tldr != null)
-                s += NLP.preprocess(tldr["text"])
-
-            fun binarize(tag: Tag): String {
-                return when(tag) {
-                    Tag.Exp -> "1"
-                    Tag.Drug, Tag.Other -> "0"
-                }
-            }
-            val outString = Json.encodeToString(mapOf(
-                "DOI" to it.key,
-                "originalTitle" to it.value.details.title,
-                "preprocessedText" to s,
-                "label" to binarize(it.value.tag),
-                )) + ",\n"
-            File("$pathStr-exported").appendText(outString)
+        distinctPapers.forEach { (id, paper) ->
+            prepareExportedFile(paper, id, path as String)
         }
-        File("$pathStr-exported").appendText("]")
     }
+    private fun prepareExportedFile(paper: Paper, id: String, path: String) {
+        fun Tag.binarize(): String = if (this == Tag.Exp) "1" else "0"
+        val outputMap: Map<String, String> = with(paper.details) {
+            mapOf(
+                "DOI" to id,
+                "originalTitle" to (title ?: ""),
+                "preprocessedText" to generatePreprocessedText((title ?: ""), publicationTypes, tldr),
+                "label" to paper.tag.binarize()
+            )
+        }
+        Json.encodeToString(outputMap).also { json ->
+            File("$path-exported").appendText("$json,\n")
+        }
+    }
+
+    private fun generatePreprocessedText(title: String, types: List<String>?, tldr: Map<String, String>?): String =
+        StringBuilder(NLP.preprocess(title)).also { sb ->
+            if (types != null && types.contains("Review")) sb.append(" Review ")
+            tldr?.get("text")?.run { sb.append(NLP.preprocess(this)) }
+        }.toString()
 
     suspend fun import(files: List<File>): CurrentPaperList {
         for (file in files) {
