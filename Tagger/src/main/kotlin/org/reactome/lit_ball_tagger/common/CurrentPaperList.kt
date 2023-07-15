@@ -7,6 +7,7 @@ import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 import java.util.*
 import kotlin.math.min
+import kotlin.reflect.KFunction3
 
 object CurrentPaperList {
     private var list: MutableList<Paper> = mutableListOf()
@@ -125,7 +126,7 @@ object CurrentPaperList {
         File(pathStr).writeText(text)
     }
 
-    fun export() {
+    fun export(processFun: KFunction3<Paper, String, String, Unit> = ::chooseEXP) {
         path ?: return
         val distinctPapers: MutableMap<String, Paper> = mutableMapOf()
 
@@ -140,12 +141,18 @@ object CurrentPaperList {
                 }
             }
         }
-        NLP.init()
         distinctPapers.forEach { (id, paper) ->
-            prepareExportedFile(paper, id, path as String)
+            processFun(paper, id, path as String)
         }
     }
-    private fun prepareExportedFile(paper: Paper, id: String, path: String) {
+    private fun chooseEXP(paper: Paper, id: String, path: String) {
+        if (paper.tag == Tag.Exp) {
+            Json.encodeToString(paper).also { json ->
+                File("$path-EXP").appendText("$json,\n")
+            }
+        }
+    }
+    private fun preprocessNLP(paper: Paper, id: String, path: String) {
         fun Tag.binarize(): String = if (this == Tag.Exp) "1" else "0"
         val outputMap: Map<String, String> = with(paper.details) {
             mapOf(

@@ -8,12 +8,15 @@ import java.util.*
 object NLP {
     private lateinit var props: Properties
     private lateinit var pipeline: StanfordCoreNLP
+    private var initialized = false
     fun init() {
         props = Properties()
         props.setProperty("annotators", "tokenize,ssplit,pos,lemma")
         pipeline = StanfordCoreNLP(props)
+        initialized = true
     }
     fun preprocess (s: String?) : String {
+        if (!initialized) init()
         if (s == null) return ""
         var str = ""
         val document = pipeline.processToCoreDocument(s)
