@@ -33,6 +33,7 @@ fun RootContent(
         onExit,
         onTagsButtonClicked = model::onTagsButtonClicked,
         onEnrichButtonClicked = model::onEnrichButtonClicked,
+        onItemFlagsClicked = model::onItemFlagsClicked,
     )
 
     scope.launch(Dispatchers.IO) {
@@ -112,7 +113,7 @@ fun RootContent(
     if (state.enrichItems) {
         scope.launch(Dispatchers.IO) {
             if (!EnrichedItems.initialized)
-                EnrichedItems.init()
+                EnrichedItems.initialize()
             (model::onItemsChanged)()
             (model::onEnrichDone)()
         }

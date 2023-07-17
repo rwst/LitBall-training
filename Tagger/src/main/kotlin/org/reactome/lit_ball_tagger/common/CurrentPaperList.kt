@@ -254,6 +254,19 @@ object CurrentPaperList {
         list.forEach { it.tag = tag }
     }
 
+    fun setFlag(id: Int, flag: String) {
+        updateItem(id) {
+            it.flags.add(flag)
+            return@updateItem it
+        }
+    }
+    fun delFlag(id: Int, flag: String) {
+        updateItem(id) {
+            it.flags.remove(flag)
+            return@updateItem it
+        }
+    }
+
     fun stats(): String {
         if (list.isEmpty()) return ""
         var nTLDR = 0

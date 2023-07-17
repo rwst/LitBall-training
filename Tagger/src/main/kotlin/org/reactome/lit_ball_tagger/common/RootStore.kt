@@ -67,7 +67,6 @@ internal class RootStore {
     fun onItemClicked(id: Int) {
         setState { copy(editingItemId = id) }
     }
-
     fun onItemDeleteClicked(id: Int) {
         setState { copy(items = CurrentPaperList.toListWithItemRemoved(id)) }
     }
@@ -76,6 +75,9 @@ internal class RootStore {
         CurrentPaperList.setTag(id, btn)
     }
 
+    fun onItemFlagsClicked(active: Boolean) {
+        setState { copy(itemFlags = active) }
+    }
     fun onInfoDoneClicked() {
         setState { copy(infoList = false) }
     }
@@ -146,6 +148,7 @@ internal class RootStore {
         val doSave: Boolean = false,
         val editTags: Boolean = false,
         val enrichItems: Boolean = false,
+        val itemFlags: Boolean = false,
     )
 }
 

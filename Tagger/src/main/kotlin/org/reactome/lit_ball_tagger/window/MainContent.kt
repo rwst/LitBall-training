@@ -29,6 +29,8 @@ import org.reactome.lit_ball_tagger.common.CurrentPaperList
 import org.reactome.lit_ball_tagger.common.EnrichedItems
 import org.reactome.lit_ball_tagger.common.Paper
 import org.reactome.lit_ball_tagger.common.Tag
+import org.reactome.lit_ball_tagger.common.dialog.FlagBoxes
+import org.reactome.lit_ball_tagger.common.dialog.RadioButtonOptions
 
 @Suppress("FunctionName")
 @Composable
@@ -42,6 +44,7 @@ internal fun MainContent(
     onExit: () -> Unit,
     onTagsButtonClicked: () -> Unit,
     onEnrichButtonClicked: () -> Unit,
+    onItemFlagsClicked: (Boolean) -> Unit,
 ) {
     Row(modifier) {
         Rail(
@@ -56,6 +59,7 @@ internal fun MainContent(
             onItemRadioButtonClicked = onItemRadioButtonClicked,
             onTagsButtonClicked = onTagsButtonClicked,
             onEnrichButtonClicked = onEnrichButtonClicked,
+            onItemFlagsClicked = onItemFlagsClicked,
         )
     }
 }
@@ -69,6 +73,7 @@ fun ListContent(
     onItemRadioButtonClicked: (id: Int, btn: Int) -> Unit,
     onTagsButtonClicked: () -> Unit,
     onEnrichButtonClicked: () -> Unit,
+    onItemFlagsClicked: (Boolean) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
@@ -113,6 +118,8 @@ fun ListContent(
             .clickable { focusRequester.requestFocus() }
             .onPreviewKeyEvent(onKeyDown)
     ) {
+        var switchChecked by remember { mutableStateOf(true) }
+
         Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -125,6 +132,13 @@ fun ListContent(
                     Text(CurrentPaperList.fileName + " " + lazyListState.firstVisibleItemIndex.toString() + '/' + items.size.toString())
                 }
                 Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
+                Switch (
+                    checked = switchChecked,
+                    onCheckedChange = {
+                        switchChecked = it
+                        onItemFlagsClicked(it)
+                    },
+                )
                 Button(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     onClick = onEnrichButtonClicked,
@@ -151,6 +165,7 @@ fun ListContent(
                         onClicked = { onItemClicked(item.id) },
                         onDeleteClicked = { onItemDeleteClicked(item.id) },
                         onOptionSelected = { btn -> onItemRadioButtonClicked(item.id, btn) },
+                        switchChecked,
                     )
                     Divider()
                 }
@@ -171,6 +186,7 @@ fun CardWithTextIconAndRadiobutton(
     onClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
     onOptionSelected: (btn: Int) -> Unit,
+    switchChecked: Boolean
 ) {
     val cardTitle = item.details.title
     val enrichVal = EnrichedItems.enrich(item.details.externalIds?.get("DOI"))
@@ -215,42 +231,17 @@ fun CardWithTextIconAndRadiobutton(
                 overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.width(16.dp))
-            RadioButtonOptions(
-                radioButtonOptions,
-                item.tag.ordinal,
-                onOptionSelected,
-            )
+            if (switchChecked) {
+                RadioButtonOptions(
+                    radioButtonOptions,
+                    item.tag.ordinal,
+                    onOptionSelected,
+                )
+            }
+            else {
+                FlagBoxes(emptyList()) {}
+            }
         }
     }
 }
 
-@Composable
-fun RadioButtonOptions(
-    options: List<String>,
-    defaultSelectedOptionIndex: Int,
-    onOptionSelected: (Int) -> Unit
-) {
-    var selectedOptionIndex by remember { mutableStateOf(defaultSelectedOptionIndex) }
-    options.forEachIndexed { index, option ->
-        Row(
-            modifier = Modifier
-                .padding(vertical = 4.dp, horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            RadioButton(
-                modifier = Modifier.size(8.dp),
-                selected = index == selectedOptionIndex,
-                onClick = {
-                    selectedOptionIndex = index
-                    onOptionSelected(selectedOptionIndex)
-                }
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                text = option,
-                fontSize = 8.sp,
-                color = Color.Black
-            )
-        }
-    }
-}
