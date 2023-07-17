@@ -75,9 +75,7 @@ fun ListContent(
 
     val onKeyDownSuspend: suspend (KeyEvent) -> Boolean = {
         when (it.type) {
-            KeyEventType.KeyUp -> {
-                false
-            }
+            KeyEventType.KeyUp -> false
 
             else -> {
                 val topItem = lazyListState.firstVisibleItemIndex

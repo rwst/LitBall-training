@@ -87,30 +87,23 @@ object CurrentPaperList {
         return this
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     fun open(files: List<File>): CurrentPaperList {
-        Settings.map["list-path"] = files[0].absolutePath.substringBeforeLast('/')
+        Settings.map["list-path"] = files.first().absolutePath.substringBeforeLast('/')
         Settings.save()
-        for (file in files) {
-            if (file.isDirectory) throw Exception("cannot open directory: ${file.name}")
-            path = file.absolutePath
-            path?.let {
-                val f = File(it)
-                if (f.exists()) {
-                    if (list.isEmpty())
-                        list = Json.decodeFromStream<MutableList<Paper>>(f.inputStream())
-                    else
-                        list.addAll(Json.decodeFromStream<MutableList<Paper>>(f.inputStream()))
-                } else
-                    throw Exception("File to open: $fileName does not exist")
-            }
+        files.forEach {file ->
+            readFromFile(file)
         }
-        if (files.size > 1) {
-            path = (path?.substringBeforeLast('/') ?: "") + "/Untitled"
-            fileName = "/Untitled"
-        } else if (files.size == 1) {
-            path = files[0].absolutePath
-            fileName = files[0].name
+
+        when {
+            files.size > 1 -> {
+                path = "${path?.substringBeforeLast('/')}/Untitled"
+                fileName = "/Untitled"
+            }
+
+            files.size == 1 -> {
+                path = files.first().absolutePath
+                fileName = files.first().name
+            }
         }
 
         list.sortBy { it.details.title }
@@ -119,6 +112,24 @@ object CurrentPaperList {
         return this
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun readFromFile(file: File) {
+        if (file.isDirectory) throw Exception("Cannot open directory: ${file.name}")
+
+        if (path == null) path = file.absolutePath
+        val f = File(file.absolutePath)
+
+        if (f.exists()) {
+            val papers = Json.decodeFromStream<MutableList<Paper>>(f.inputStream())
+            if (list.isEmpty()) {
+                list = papers
+            } else {
+                list.addAll(papers)
+            }
+        } else {
+            throw Exception("File to open: $fileName does not exist")
+        }
+    }
     fun save() {
         if (path == null) return
         val pathStr: String = path as String
@@ -174,44 +185,61 @@ object CurrentPaperList {
         }.toString()
 
     suspend fun import(files: List<File>): CurrentPaperList {
-        for (file in files) {
-            if (file.isDirectory) {
-                Settings.map["import-path"] = file.absolutePath
-                Settings.save()
-                return this
-            } else {
-                Settings.map["import-path"] = file.absolutePath.substringBeforeLast('/')
-                Settings.save()
-            }
-            val lines = file
-                .readLines()
-                .filter { it.isNotBlank() }
-                .map {
-                    it.uppercase(Locale.ENGLISH)
-                        .removeSuffix("^M")
-                        .trimEnd()
-                }
-                .toSet()
-                .toList()
-            val doisRequested = lines.toMutableSet()
-            val chunkSize = 450
-            for (n in 1..(lines.size + chunkSize - 1) / chunkSize) {
-                val maxId: Int = list.maxOfOrNull { it.id } ?: 0
-                val upper = min(n * chunkSize - 1, lines.size - 1)
-                val lower = (n - 1) * chunkSize
-                S2client.getDataFor(lines.subList(lower, upper + 1))?.mapIndexed { index, paperDetails ->
-                    if (paperDetails != null) {
-                        list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
-                        doisRequested.remove(paperDetails.externalIds?.get("DOI").toString().uppercase(Locale.ENGLISH))
-                    }
-                }
-            }
+        files.forEach { file ->
+            setImportPath(file)
+            if (file.isDirectory) return this
+            val lines = prepareLines(file)
+            val doisRequested = processLines(lines)
             sanitize()
-            if (doisRequested.isNotEmpty())
-                File(file.absolutePath + "-DOIs-not-found").writeText(doisRequested.toString())
+            writeDoisIfNotEmpty(file.absolutePath, doisRequested)
         }
         updateShadowMap()
+
         return this
+    }
+    private fun setImportPath(file: File) {
+        val importPath =
+            if (file.isDirectory)
+                file.absolutePath
+            else
+                file.absolutePath.substringBeforeLast('/')
+        Settings.map["import-path"] = importPath
+        Settings.save()
+    }
+    private fun prepareLines(file: File): List<String> {
+        return file.readLines()
+            .filter { it.isNotBlank() }
+            .map {
+                it.uppercase(Locale.ENGLISH)
+                    .removeSuffix("^M")
+                    .trimEnd()
+            }
+            .toSet()
+            .toList()
+    }
+    private suspend fun processLines(lines: List<String>): MutableSet<String> {
+        val doisRequested = lines.toMutableSet()
+        val chunkSize = 450
+        val chunksCount = (lines.size + chunkSize - 1) / chunkSize
+
+        for (n in 1..chunksCount) {
+            val maxId: Int = list.maxOfOrNull { it.id } ?: 0
+            val upper = min(n * chunkSize - 1, lines.size - 1)
+            val lower = (n - 1) * chunkSize
+
+            S2client.getDataFor(lines.subList(lower, upper + 1))?.mapIndexed { index, paperDetails ->
+                if (paperDetails != null) {
+                    list.add(Paper(maxId + index + 1, paperDetails, Tag.Exp))
+                    doisRequested.remove(paperDetails.externalIds?.get("DOI").toString().uppercase(Locale.ENGLISH))
+                }
+            }
+        }
+
+        return doisRequested
+    }
+    private fun writeDoisIfNotEmpty(path: String, doisRequested: MutableSet<String>) {
+        if (doisRequested.isNotEmpty())
+            File("$path-DOIs-not-found").writeText(doisRequested.toString())
     }
 
     fun setTag(id: Int, btn: Int) {
