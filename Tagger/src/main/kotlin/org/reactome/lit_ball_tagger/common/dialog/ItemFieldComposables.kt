@@ -63,7 +63,7 @@ fun FlagBoxes(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
-            val nColsPerRow = 5
+            val nColsPerRow = 8
             val nRows = (flags.size + nColsPerRow - 1) / nColsPerRow
             val nCols = if (flags.size <= nColsPerRow) flags.size else nColsPerRow
             val rowHeights = listOf(20.dp, 20.dp, 20.dp, 16.dp, 12.dp, 12.dp, 12.dp, 12.dp, 12.dp)

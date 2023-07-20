@@ -239,7 +239,8 @@ fun CardWithTextIconAndRadiobutton(
                 )
             }
             else {
-                FlagBoxes(listOf("Entry", "Repl", "Asmbly", "Mosq", "V-H", "H-V", "RNA", "PTM")) {}
+                FlagBoxes(listOf("Entry", "Repl", "Asmbly", "Mosq", "V-H", "H-V", "RNA", "PTM",
+                    "C", "E", "prM", "NS1", "NS2A", "NS2B", "NS3", "NS2B3", "NS4A", "NS4B", "NS5")) {}
             }
         }
     }
