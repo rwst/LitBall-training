@@ -118,7 +118,7 @@ fun ListContent(
             .clickable { focusRequester.requestFocus() }
             .onPreviewKeyEvent(onKeyDown)
     ) {
-        var switchChecked by remember { mutableStateOf(true) }
+        var switchChecked by remember { mutableStateOf(false) }
 
         Column {
             Row(
@@ -231,7 +231,7 @@ fun CardWithTextIconAndRadiobutton(
                 overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.width(16.dp))
-            if (switchChecked) {
+            if (!switchChecked) {
                 RadioButtonOptions(
                     radioButtonOptions,
                     item.tag.ordinal,
@@ -239,7 +239,7 @@ fun CardWithTextIconAndRadiobutton(
                 )
             }
             else {
-                FlagBoxes(emptyList()) {}
+                FlagBoxes(listOf("Entry", "Repl", "Asmbly", "Mosq", "V-H", "H-V", "RNA", "PTM")) {}
             }
         }
     }
