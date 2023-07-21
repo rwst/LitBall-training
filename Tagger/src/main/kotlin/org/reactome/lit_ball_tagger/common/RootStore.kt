@@ -78,6 +78,10 @@ internal class RootStore {
     fun onItemFlagsClicked(active: Boolean) {
         setState { copy(itemFlags = active) }
     }
+
+    fun onFlagSet(id: Int, flagNo: Int, value: Boolean) {
+        CurrentPaperList.setFlag(id, flagNo, value)
+    }
     fun onInfoDoneClicked() {
         setState { copy(infoList = false) }
     }

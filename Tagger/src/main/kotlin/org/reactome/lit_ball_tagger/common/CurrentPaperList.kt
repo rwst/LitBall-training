@@ -14,7 +14,15 @@ object CurrentPaperList {
     private var path: String? = null
     var fileName: String = ""
     private var shadowMap: MutableMap<Int, Int> = mutableMapOf()
-    fun toList(): List<Paper> {
+    var flagList: List<String>? = null
+        get() {
+            if (field == null) {
+                field = Settings.map["flags"]?.split(" ")
+            }
+            return field
+        }
+
+fun toList(): List<Paper> {
         return list.toList()
     }
 
@@ -254,15 +262,13 @@ object CurrentPaperList {
         list.forEach { it.tag = tag }
     }
 
-    fun setFlag(id: Int, flag: String) {
+    fun setFlag(id: Int, flagNo: Int, value: Boolean) {
+        val flag = flagList?.get(flagNo)
         updateItem(id) {
-            it.flags.add(flag)
-            return@updateItem it
-        }
-    }
-    fun delFlag(id: Int, flag: String) {
-        updateItem(id) {
-            it.flags.remove(flag)
+            if (value)
+                flag?.let { it1 -> it.flags.add(it1) }
+            else
+                it.flags.remove(flag)
             return@updateItem it
         }
     }

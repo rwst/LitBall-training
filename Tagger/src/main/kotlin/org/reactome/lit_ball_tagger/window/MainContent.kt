@@ -25,10 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.runBlocking
-import org.reactome.lit_ball_tagger.common.CurrentPaperList
-import org.reactome.lit_ball_tagger.common.EnrichedItems
-import org.reactome.lit_ball_tagger.common.Paper
-import org.reactome.lit_ball_tagger.common.Tag
+import org.reactome.lit_ball_tagger.common.*
 import org.reactome.lit_ball_tagger.common.dialog.FlagBoxes
 import org.reactome.lit_ball_tagger.common.dialog.RadioButtonOptions
 
@@ -45,6 +42,7 @@ internal fun MainContent(
     onTagsButtonClicked: () -> Unit,
     onEnrichButtonClicked: () -> Unit,
     onItemFlagsClicked: (Boolean) -> Unit,
+    onFlagSet: (Int, Int, Boolean) -> Unit
 ) {
     Row(modifier) {
         Rail(
@@ -60,6 +58,7 @@ internal fun MainContent(
             onTagsButtonClicked = onTagsButtonClicked,
             onEnrichButtonClicked = onEnrichButtonClicked,
             onItemFlagsClicked = onItemFlagsClicked,
+            onFlagSet = onFlagSet,
         )
     }
 }
@@ -74,6 +73,7 @@ fun ListContent(
     onTagsButtonClicked: () -> Unit,
     onEnrichButtonClicked: () -> Unit,
     onItemFlagsClicked: (Boolean) -> Unit,
+    onFlagSet: (Int, Int, Boolean) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
@@ -166,7 +166,7 @@ fun ListContent(
                         onDeleteClicked = { onItemDeleteClicked(item.id) },
                         onOptionSelected = { btn -> onItemRadioButtonClicked(item.id, btn) },
                         switchChecked,
-                        onFlagSet = { _,_ -> }
+                        onFlagSet = { idx,value -> onFlagSet(item.id, idx, value) }
                     )
                     Divider()
                 }
@@ -241,9 +241,9 @@ fun CardWithTextIconAndRadiobutton(
                 )
             }
             else {
+                val fList = CurrentPaperList.flagList ?: emptyList()
                 FlagBoxes(
-                    listOf("Entry", "Repl", "Asmbly", "Mosq", "V-H", "H-V", "RNA", "PTM",
-                    "C", "E", "prM", "NS1", "NS2A", "NS2B", "NS3", "NS2B3", "NS4A", "NS4B", "NS5"),
+                    fList,
                     onFlagSet,
                     )
             }

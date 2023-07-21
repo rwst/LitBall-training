@@ -34,6 +34,7 @@ fun RootContent(
         onTagsButtonClicked = model::onTagsButtonClicked,
         onEnrichButtonClicked = model::onEnrichButtonClicked,
         onItemFlagsClicked = model::onItemFlagsClicked,
+        onFlagSet = model::onFlagSet,
     )
 
     scope.launch(Dispatchers.IO) {
@@ -57,7 +58,7 @@ fun RootContent(
     }
     if (state.newList) {
         NewListDialog(
-            state.settings.map["list-path"],
+            state.settings.map["list-path"] as String,
             onResult = {
                 scope.launch(Dispatchers.IO) {
                     CurrentPaperList.new(it)
@@ -69,7 +70,7 @@ fun RootContent(
     }
     if (state.openList) {
         NewListDialog(
-            state.settings.map["list-path"],
+            state.settings.map["list-path"] as String,
             onResult = {
                 scope.launch(Dispatchers.IO) {
                     CurrentPaperList.open(it)
@@ -81,7 +82,7 @@ fun RootContent(
     }
     if (state.doImport) {
         ImportDialog(
-            state.settings.map["import-path"],
+            state.settings.map["import-path"] as String,
             onResult = {
                 scope.launch(Dispatchers.IO) {
                     CurrentPaperList.import(it)
