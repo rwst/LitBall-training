@@ -48,46 +48,57 @@ fun RadioButtonOptions(
 @Composable
 fun FlagBoxes(
     flags: List<String>,
-    onFlagChanged: (Int) -> Unit,
+    onFlagChanged: (Int, Boolean) -> Unit,
 )
 {
-    val (checkedState, onStateChange) = remember { mutableStateOf(false) }
-    Row(
-        Modifier
-            .toggleable(
-                value = checkedState,
-                onValueChange = { onStateChange(!checkedState) },
-                role = Role.Checkbox
-            )
-            .padding(horizontal = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column {
-            val nColsPerRow = 8
-            val nRows = (flags.size + nColsPerRow - 1) / nColsPerRow
-            val nCols = if (flags.size <= nColsPerRow) flags.size else nColsPerRow
-            val rowHeights = listOf(20.dp, 20.dp, 20.dp, 16.dp, 12.dp, 12.dp, 12.dp, 12.dp, 12.dp)
-            val textHeights = listOf(18.sp, 16.sp, 12.sp, 10.sp, 8.sp, 8.sp, 8.sp, 8.sp, 8.sp)
-            val boxScales = listOf(1.0f, 1.0f, 0.8f, 0.7f, 0.6f, 0.6f, 0.6f, 0.6f, 0.6f)
-            for (rowNr in 1..nRows) {
-                Row (
-                    modifier = Modifier.height(rowHeights[nRows])
-                ) {
-                    for (colNr in 1..nCols) {
-                        val flagNr = nColsPerRow*(rowNr-1) + colNr
-                        if (flagNr > flags.size) continue
-                        Checkbox(
-                            checked = checkedState,
-                            onCheckedChange = null,
-                            modifier = Modifier.scale(boxScales[nRows])
-                        )
-                        Text(
-                            text = flags[flagNr-1],
-                            fontSize = textHeights[nRows],
+    Column {
+        val nColsPerRow = 8
+        val nRows = (flags.size + nColsPerRow - 1) / nColsPerRow
+        val nCols = if (flags.size <= nColsPerRow) flags.size else nColsPerRow
+        val rowHeights = listOf(20.dp, 20.dp, 20.dp, 16.dp, 12.dp, 12.dp, 12.dp, 12.dp, 12.dp)
+        val textHeights = listOf(18.sp, 16.sp, 12.sp, 10.sp, 8.sp, 8.sp, 8.sp, 8.sp, 8.sp)
+        val boxScales = listOf(1.0f, 1.0f, 0.8f, 0.7f, 0.6f, 0.6f, 0.6f, 0.6f, 0.6f)
+        for (rowNr in 1..nRows) {
+            Row (
+                modifier = Modifier
+                    .height(rowHeights[nRows]),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                for (colNr in 1..nCols) {
+                    val flagNr = nColsPerRow*(rowNr-1) + colNr
+                    if (flagNr > flags.size) continue
+                    val (checkedState, onStateChange) = remember { mutableStateOf(false) }
+                    Column (
+                        modifier = Modifier
+                            .padding(horizontal = 0.dp)
+                    ){
+                        Row (
                             modifier = Modifier
-                                .padding(end = 6.dp)
-                                //.height(textHeights[nRows])
-                        )
+                                .padding(horizontal = 0.dp)
+                                .toggleable(
+                                    value = true,
+                                    onValueChange = {
+                                        onStateChange(!checkedState)
+                                        onFlagChanged(rowNr * nCols + colNr - 1, it)
+                                    },
+                                    role = Role.Checkbox
+                                ),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = checkedState,
+                                onCheckedChange = { onStateChange(!checkedState) },
+                                modifier = Modifier
+                                    .scale(boxScales[nRows])
+                                    .padding(horizontal = 0.dp)
+                            )
+                            Text(
+                                text = flags[flagNr - 1],
+                                fontSize = textHeights[nRows],
+                                modifier = Modifier
+                                    .padding(horizontal = 0.dp)
+                            )
+                        }
                     }
                 }
             }

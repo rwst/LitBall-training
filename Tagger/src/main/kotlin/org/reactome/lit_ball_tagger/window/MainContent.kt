@@ -166,6 +166,7 @@ fun ListContent(
                         onDeleteClicked = { onItemDeleteClicked(item.id) },
                         onOptionSelected = { btn -> onItemRadioButtonClicked(item.id, btn) },
                         switchChecked,
+                        onFlagSet = { _,_ -> }
                     )
                     Divider()
                 }
@@ -186,7 +187,8 @@ fun CardWithTextIconAndRadiobutton(
     onClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
     onOptionSelected: (btn: Int) -> Unit,
-    switchChecked: Boolean
+    switchChecked: Boolean,
+    onFlagSet: (Int, Boolean) -> Unit,
 ) {
     val cardTitle = item.details.title
     val enrichVal = EnrichedItems.enrich(item.details.externalIds?.get("DOI"))
@@ -239,8 +241,11 @@ fun CardWithTextIconAndRadiobutton(
                 )
             }
             else {
-                FlagBoxes(listOf("Entry", "Repl", "Asmbly", "Mosq", "V-H", "H-V", "RNA", "PTM",
-                    "C", "E", "prM", "NS1", "NS2A", "NS2B", "NS3", "NS2B3", "NS4A", "NS4B", "NS5")) {}
+                FlagBoxes(
+                    listOf("Entry", "Repl", "Asmbly", "Mosq", "V-H", "H-V", "RNA", "PTM",
+                    "C", "E", "prM", "NS1", "NS2A", "NS2B", "NS3", "NS2B3", "NS4A", "NS4B", "NS5"),
+                    onFlagSet,
+                    )
             }
         }
     }
