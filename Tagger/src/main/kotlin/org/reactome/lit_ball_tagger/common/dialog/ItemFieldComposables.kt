@@ -48,6 +48,7 @@ fun RadioButtonOptions(
 @Composable
 fun FlagBoxes(
     flags: List<String>,
+    checkedFlags: Set<String>,
     onFlagChanged: (Int, Boolean) -> Unit,
 )
 {
@@ -67,19 +68,19 @@ fun FlagBoxes(
                 for (colNr in 1..nCols) {
                     val flagNr = nColsPerRow*(rowNr-1) + colNr
                     if (flagNr > flags.size) continue
-                    val (checkedState, onStateChange) = remember { mutableStateOf(false) }
+                    val (checkedState, onStateChange) = remember { mutableStateOf(flags[flagNr-1] in checkedFlags) }
                     Column (
                         modifier = Modifier
-                            .padding(horizontal = 0.dp)
+                            .absolutePadding(left = 0.dp)
                     ){
                         Row (
                             modifier = Modifier
-                                .padding(horizontal = 0.dp)
+                                .absolutePadding(left = 0.dp)
                                 .toggleable(
                                     value = true,
                                     onValueChange = {
                                         onStateChange(!checkedState)
-                                        onFlagChanged(rowNr * nCols + colNr - 1, it)
+                                        onFlagChanged(flagNr - 1, checkedState)
                                     },
                                     role = Role.Checkbox
                                 ),
@@ -87,7 +88,10 @@ fun FlagBoxes(
                         ) {
                             Checkbox(
                                 checked = checkedState,
-                                onCheckedChange = { onStateChange(!checkedState) },
+                                onCheckedChange = {
+                                    onStateChange(!checkedState)
+                                    onFlagChanged(flagNr - 1, !it)
+                                },
                                 modifier = Modifier
                                     .scale(boxScales[nRows])
                                     .padding(horizontal = 0.dp)

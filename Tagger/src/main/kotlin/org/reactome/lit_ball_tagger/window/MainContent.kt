@@ -244,6 +244,7 @@ fun CardWithTextIconAndRadiobutton(
                 val fList = CurrentPaperList.flagList ?: emptyList()
                 FlagBoxes(
                     fList,
+                    item.flags,
                     onFlagSet,
                     )
             }

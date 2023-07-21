@@ -265,7 +265,7 @@ fun toList(): List<Paper> {
     fun setFlag(id: Int, flagNo: Int, value: Boolean) {
         val flag = flagList?.get(flagNo)
         updateItem(id) {
-            if (value)
+            if (!value)
                 flag?.let { it1 -> it.flags.add(it1) }
             else
                 it.flags.remove(flag)
