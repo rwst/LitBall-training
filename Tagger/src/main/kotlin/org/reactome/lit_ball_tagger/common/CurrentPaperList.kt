@@ -145,7 +145,16 @@ fun toList(): List<Paper> {
         File(pathStr).writeText(text)
     }
 
-    fun export(processFun: KFunction3<Paper, String, String, Unit> = ::chooseEXP) {
+    val exportFuncs: List<() -> Unit> = listOf(
+        { export(processFun = ::chooseEXP) },
+        { export(processFun = ::preprocessNLP) },
+
+    )
+    val exportLabels = listOf(
+        "Export papers with EXP tag",
+        "Export preprocessed",
+        "Export flag-specific")
+    private fun export(processFun: KFunction3<Paper, String, String, Unit> = ::chooseEXP) {
         path ?: return
         val distinctPapers: MutableMap<String, Paper> = mutableMapOf()
 
@@ -164,6 +173,7 @@ fun toList(): List<Paper> {
             processFun(paper, id, path as String)
         }
     }
+    @Suppress("UNUSED_PARAMETER")
     private fun chooseEXP(paper: Paper, id: String, path: String) {
         if (paper.tag == Tag.Exp) {
             Json.encodeToString(paper).also { json ->

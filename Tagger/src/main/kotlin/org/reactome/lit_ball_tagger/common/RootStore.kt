@@ -37,7 +37,7 @@ internal class RootStore {
     }
 
     private fun buttonExport() {
-        CurrentPaperList.export()
+        setState { copy(doExport = true) }
     }
 
     private fun buttonSave() {
@@ -115,6 +115,9 @@ internal class RootStore {
     fun onImportDoneChanged() {
         setState { copy(items = CurrentPaperList.toList(), doImport = false) }
     }
+    fun onExportDoneChanged() {
+        setState { copy(doExport = false) }
+    }
 
     fun onSaveDoneChanged() {
         setState { copy(doSave = false) }
@@ -149,6 +152,7 @@ internal class RootStore {
         val newList: Boolean = false,
         val openList: Boolean = false,
         val doImport: Boolean = false,
+        val doExport: Boolean = false,
         val doSave: Boolean = false,
         val editTags: Boolean = false,
         val enrichItems: Boolean = false,

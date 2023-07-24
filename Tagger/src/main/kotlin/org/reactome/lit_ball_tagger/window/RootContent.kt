@@ -92,6 +92,17 @@ fun RootContent(
             onDoneChanged = model::onImportDoneChanged,
         )
     }
+    if (state.doExport) {
+        PopupActionDialog(
+            CurrentPaperList.exportLabels,
+            onResult = {
+                scope.launch(Dispatchers.IO) {
+                    CurrentPaperList.exportFuncs[it]()
+                }
+            },
+            onDoneChanged = model::onExportDoneChanged,
+        )
+    }
     if (state.doSave) {
         scope.launch(Dispatchers.IO) {
             (model::onSaveDoneChanged)()
