@@ -148,12 +148,12 @@ fun toList(): List<Paper> {
     val exportFuncs: List<() -> Unit> = listOf(
         { export(processFun = ::chooseEXP) },
         { export(processFun = ::preprocessNLP) },
-
+        { exportFlags() },
     )
     val exportLabels = listOf(
         "Export papers with EXP tag",
         "Export preprocessed",
-        "Export flag-specific")
+        "Export flag-specific CSV")
     private fun export(processFun: KFunction3<Paper, String, String, Unit> = ::chooseEXP) {
         path ?: return
         val distinctPapers: MutableMap<String, Paper> = mutableMapOf()
@@ -195,12 +195,43 @@ fun toList(): List<Paper> {
             File("$path-exported").appendText("$json,\n")
         }
     }
-
     private fun generatePreprocessedText(title: String, types: List<String>?, tldr: Map<String, String>?): String =
         StringBuilder(NLP.preprocess(title)).also { sb ->
             if (types != null && types.contains("Review")) sb.append(" Review ")
             tldr?.get("text")?.run { sb.append(NLP.preprocess(this)) }
         }.toString()
+
+    private fun exportFlags() {
+        val doisWithoutPMID = list
+            .filter { it.details.externalIds?.containsKey("PubMed") ?: false }
+            .mapNotNull { it.details.externalIds?.get("DOI") }
+        val pmidMap = mutableMapOf<String, String>()
+        list.associateTo(pmidMap) {
+            val key = it.details.externalIds?.get("DOI") ?: ""
+            val value = it.details.externalIds?.get("PubMed") ?: ""
+            key to value
+        }
+        val dois = list
+            .mapNotNull { it.details.externalIds?.get("DOI") }
+        val pmids = pmidMap + WikidataService.getPMIDs(doisWithoutPMID)
+        val pmcs = WikidataService.getPMCs(dois)
+        val pubDates = WikidataService.getPubDates(dois)
+        deleteFilesStartingWith("$path-flag-")
+        list.forEach {
+            val doi = it.details.externalIds?.get("DOI")
+            val outStr = java.lang.StringBuilder()
+                .append("\"" + (it.details.title ?: "") + "\",,")
+                .append(if (it.details.publicationTypes?.contains("Review") == true) "✔," else ",")
+                .append((pubDates[doi] ?: "") + ",")
+                .append(if (pmids[doi] != null) "https://pubmed.ncbi.nlm.nih.gov/${pmids[doi]}," else ",")
+                .append(if (pmcs[doi] != null) "https://www.ncbi.nlm.nih.gov/pmc/articles/${pmcs[doi]}," else ",")
+                .append("https://doi.org/$doi")
+                .append("\n")
+                .toString()
+            for (flag in it.flags)
+                File("$path-flag-$flag").appendText(outStr)
+        }
+    }
 
     suspend fun import(files: List<File>): CurrentPaperList {
         files.forEach { file ->
