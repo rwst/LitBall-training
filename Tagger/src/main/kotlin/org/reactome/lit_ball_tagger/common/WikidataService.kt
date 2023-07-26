@@ -1,5 +1,6 @@
 package org.reactome.lit_ball_tagger.common
 
+import kotlinx.coroutines.delay
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -8,7 +9,7 @@ import java.io.InputStreamReader
 
 object WikidataService {
     private const val CHUNK_SIZE = 1000
-    fun getPMIDs(dois: List<String>): Map<String, String> {
+    suspend fun getPMIDs(dois: List<String>): Map<String, String> {
         return dois.chunked(CHUNK_SIZE).flatMap { doiChunk ->
             val query="""
                 SELECT DISTINCT ?doi ?pmid
@@ -23,7 +24,7 @@ object WikidataService {
             jol.map { (it["doi"] ?: "") to (it["pmid"] ?: "") }
         }.toMap()
     }
-    fun getPMCs(dois: List<String>): Map<String, String> {
+    suspend fun getPMCs(dois: List<String>): Map<String, String> {
         return dois.chunked(CHUNK_SIZE).flatMap { doiChunk ->
             val query="""
                 SELECT DISTINCT ?doi ?pmc
@@ -38,7 +39,7 @@ object WikidataService {
             jol.map { (it["doi"] ?: "") to (it["pmc"] ?: "") }
         }.toMap()
     }
-    fun getPubDates(dois: List<String>): Map<String, String> {
+    suspend fun getPubDates(dois: List<String>): Map<String, String> {
         return dois.chunked(CHUNK_SIZE).flatMap { doiChunk ->
             val query="""
                 SELECT DISTINCT ?doi ?pDate
@@ -50,16 +51,17 @@ object WikidataService {
                 }
             """.trimIndent()
             val jol = doQuery(query)
-            print(jol)
             jol.map { (it["doi"] ?: "") to (it["pDate"] ?: "").split("T")[0] }
         }.toMap()
     }
 }
 
-fun doQuery(query: String): MutableList<Map<String, String>> {
+suspend fun doQuery(query: String): MutableList<Map<String, String>> {
     val tempFile = File.createTempFile("litBall-query", ".rq")
     tempFile.writeText(query)
     val result = executeCommand("wd sparql ${tempFile.absolutePath}")
+    print("queried ${tempFile.absolutePath}")
+    delay(3000)
     return Json.decodeFromString<MutableList<Map<String,String>>>(result)
 }
 fun executeCommand(command: String): String {

@@ -1,5 +1,6 @@
 package org.reactome.lit_ball_tagger.common
 
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -148,7 +149,7 @@ fun toList(): List<Paper> {
     val exportFuncs: List<() -> Unit> = listOf(
         { export(processFun = ::chooseEXP) },
         { export(processFun = ::preprocessNLP) },
-        { exportFlags() },
+        { runBlocking { exportFlags() } },
     )
     val exportLabels = listOf(
         "Export papers with EXP tag",
@@ -201,26 +202,28 @@ fun toList(): List<Paper> {
             tldr?.get("text")?.run { sb.append(NLP.preprocess(this)) }
         }.toString()
 
-    private fun exportFlags() {
+    private suspend fun exportFlags() {
         val doisWithoutPMID = list
             .filter { it.details.externalIds?.containsKey("PubMed") ?: false }
             .mapNotNull { it.details.externalIds?.get("DOI") }
+            .map { it.uppercase() }
         val pmidMap = mutableMapOf<String, String>()
         list.associateTo(pmidMap) {
-            val key = it.details.externalIds?.get("DOI") ?: ""
+            val key = it.details.externalIds?.get("DOI")?.uppercase() ?: ""
             val value = it.details.externalIds?.get("PubMed") ?: ""
             key to value
         }
         val dois = list
             .mapNotNull { it.details.externalIds?.get("DOI") }
+            .map { it.uppercase() }
+        path?.substringBeforeLast('/')?.let { deleteFilesStartingWith(it, "$path-flag-") }
         val pmids = pmidMap + WikidataService.getPMIDs(doisWithoutPMID)
         val pmcs = WikidataService.getPMCs(dois)
         val pubDates = WikidataService.getPubDates(dois)
-        deleteFilesStartingWith("$path-flag-")
         list.forEach {
-            val doi = it.details.externalIds?.get("DOI")
+            val doi = it.details.externalIds?.get("DOI")?.uppercase()
             val outStr = java.lang.StringBuilder()
-                .append("\"" + (it.details.title ?: "") + "\",,")
+                .append("\"" + (it.details.title ?: "") + "\",,,")
                 .append(if (it.details.publicationTypes?.contains("Review") == true) "✔," else ",")
                 .append((pubDates[doi] ?: "") + ",")
                 .append(if (pmids[doi] != null) "https://pubmed.ncbi.nlm.nih.gov/${pmids[doi]}," else ",")
@@ -229,7 +232,7 @@ fun toList(): List<Paper> {
                 .append("\n")
                 .toString()
             for (flag in it.flags)
-                File("$path-flag-$flag").appendText(outStr)
+                File("$path-flag-$flag.csv").appendText(outStr)
         }
     }
 
